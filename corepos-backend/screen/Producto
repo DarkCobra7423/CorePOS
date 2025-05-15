@@ -1,0 +1,25 @@
+package com.corepos.producto.model;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "productos")
+public class Producto {
+
+    @Id
+    private String id;
+
+    @NotBlank
+    private String nombre;
+
+    @PositiveOrZero
+    private double precio;
+
+    @PositiveOrZero
+    private int stock;
+
+    // Getters y setters
+}
+

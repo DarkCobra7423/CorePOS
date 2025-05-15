@@ -1,0 +1,156 @@
+🧱 Fase 1 – Módulos Básicos (MVP - Producto Viable Mínimo)
+
+Estos son los módulos imprescindibles para que el sistema funcione como un punto de venta funcional con control de inventario.
+1. Autenticación y seguridad
+
+    Login de usuario
+
+    Roles y permisos (admin, vendedor, etc.)
+
+    Token JWT
+
+2. Gestión de productos
+
+    CRUD de productos
+
+    Categorías
+
+    Unidades de medida (kg, unidades, litros...)
+
+3. Inventario
+
+    Stock actual
+
+    Movimientos de inventario (entrada/salida)
+
+    Alertas de bajo stock
+
+4. Punto de venta (POS)
+
+    Crear venta
+
+    Buscar productos
+
+    Calcular totales, descuentos, cambio
+
+    Registro de ventas
+
+    Impresión o envío de ticket (opcional)
+
+5. Historial de ventas
+
+    Listado de ventas
+
+    Filtros por fecha, vendedor, cliente
+
+    Detalles por ticket
+
+📈 Fase 2 – Funcionalidades Intermedias
+
+Con esto ya tienes un sistema más sólido, ideal para negocios pequeños y medianos.
+6. Clientes
+
+    CRUD de clientes
+
+    Historial de compras por cliente
+
+    Datos de contacto
+
+7. Proveedores
+
+    CRUD de proveedores
+
+    Historial de compras a proveedor
+
+8. Compras y reabastecimiento
+
+    Registro de compras (entrada formal de stock)
+
+    Orden de compra a proveedor
+
+9. Reportes
+
+    Ventas por día/mes/año
+
+    Producto más vendido
+
+    Stock crítico
+
+    Margen de ganancia por producto
+
+10. Caja y control de efectivo
+
+    Registro de apertura/cierre de caja
+
+    Ingresos y egresos manuales
+
+    Balance diario
+
+11. Facturación electrónica (si aplica)
+
+    Integración con SAT (México), AFIP (Argentina), SUNAT (Perú), etc.
+
+    Timbrado automático
+
+    Generación de CFDI o boletas
+
+🧠 Fase 3 – Funcionalidades Avanzadas
+
+Estas funciones están pensadas para empresas más grandes, que requieren automatización, múltiples sucursales o un ERP completo.
+12. Multi-sucursal
+
+    Gestión de tiendas
+
+    Stock por sucursal
+
+    Transferencias entre sucursales
+
+13. Usuarios avanzados y auditoría
+
+    Permisos granulares
+
+    Auditoría de acciones (logs de usuarios)
+
+14. Gestión financiera
+
+    Cuentas por cobrar / pagar
+
+    Integración bancaria (CSV o APIs)
+
+    Balance general, estado de resultados
+
+15. Recursos Humanos (RRHH)
+
+    Empleados
+
+    Asistencias
+
+    Nómina básica
+
+16. CRM (Gestión de clientes)
+
+    Seguimiento de clientes
+
+    Envío de correos/ofertas
+
+    Notas y tareas
+
+17. Manufactura / Producción (si aplica)
+
+    Órdenes de producción
+
+    Consumo de materias primas
+
+    Control de procesos
+
+18. Integración con ecommerce
+
+    Sincronización con tienda online (Shopify, WooCommerce, etc.)
+
+    Sincronización de productos e inventario
+
+19. APIs públicas o externas
+
+    Para apps móviles, integraciones con terceros o BI (Power BI, Tableau)
+
+

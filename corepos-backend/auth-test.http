@@ -1,0 +1,43 @@
+###Carla
+###Add User
+POST http://localhost:8080/auth/addNewUser
+Content-Type: application/json
+
+{
+  "name": "alicia",
+  "email": "alice@gmail.com",
+  "password": "pas123",
+  "roles": "ROLE_ADMIN"
+}
+
+###Welcome
+GET http://localhost:8080/auth/welcome
+
+###Carla
+
+
+### LOGIN - Obtener token
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "username": "darkcobra1",
+  "password": "admin123"
+}
+
+### REGISTER (solo si no existe el usuario)
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+   "username": "darkcobra1",
+   "password": "admin123"
+}
+
+### ACCESO A ENDPOINT PROTEGIDO (reemplaza el token abajo)
+GET http://localhost:8080/api/articles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjczNzk3LCJleHAiOjE3NDczMDk3OTd9.mFkRAWcSfqqfhDDGXMm13qfppAEYE6WUSBzPkSLkRQo
+
+###ELIMINAR ARTÍCULO POR ID (protegido)
+DELETE http://localhost:8080/articles/68250f96865eff71ce985c16
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
