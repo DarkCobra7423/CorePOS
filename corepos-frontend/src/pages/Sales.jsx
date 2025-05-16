@@ -5,8 +5,8 @@ function Sales() {
         <FullScreenWrapper>
             <Container>
                 <ContainerPromotion>
-                    <AppliedDiscount>Usd. Ahorro</AppliedDiscount>
-                    <Promotion>Castrol 2x$300 7.00</Promotion>
+                    <AppliedDiscount>UD. AHORRO: 996.00</AppliedDiscount>
+                    <Promotion>CASTROL 2x$300 7.00</Promotion>
                 </ContainerPromotion>
                 <ContainerTotal>
                     <h2>Total:</h2>
@@ -148,6 +148,7 @@ const TableWrapper = styled.div`
     text-align: left;
     padding: 0.5rem;
     //border-bottom: 1px solid #c9cbd8;
+    text-transform: uppercase;
   }
 
   thead {
