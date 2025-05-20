@@ -1,0 +1,38 @@
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #f0f0f0;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 16px;
+    line-height: normal;
+    overflow-y: scroll;
+}
+
+a,
+a:hover,
+a:visited,
+a:link,
+a:active {
+    text-decoration: none;
+}
+
+a:active {
+    color: #fff !important;
+}
+
+::selection {
+    background: #5af;
+    color: white;
+    text-shadow: none;
+}
+
+::-moz-selection {
+    background: #5af;
+    color: white;
+    text-shadow: none;
+}

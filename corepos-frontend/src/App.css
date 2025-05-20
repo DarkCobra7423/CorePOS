@@ -1,15 +1,21 @@
-@import url("https://fonts.googleapis.com/css?family=Lato:300,300italic");
+/* @import url("https://fonts.googleapis.com/css?family=Lato:300,300italic"); */
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
 
 html {
-  font-family: sans-serif;
+  /* font-family: sans-serif; */
+  font-family: "Roboto Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
   /* font-size: 62.5%;
   color: #c1c6cb;*/
-  background-color: #15202e;
+  background-color: #f0f0f0;
 }
 
 body {
-  /* margin: 0;
-  padding: 0; */
+  margin: 0;
+  /*padding: 0; */
   overflow: hidden;
   overflow-y: auto;
+}
+
+.no-scroll {
+  overflow-y: hidden !important;
 }

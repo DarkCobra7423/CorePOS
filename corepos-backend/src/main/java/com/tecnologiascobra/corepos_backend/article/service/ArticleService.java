@@ -61,4 +61,29 @@ public class ArticleService {
         }
         return false;
     }
+
+    public Optional<Article> findByValue(String value) {
+        // Intenta buscar por ID
+        Optional<Article> article = articleRepository.findById(value);
+        if (article.isPresent())
+            return article;
+
+        // Intenta buscar por UPC
+        article = articleRepository.findByUpc(value);
+        if (article.isPresent())
+            return article;
+
+        // Intenta buscar por Item Number
+        return articleRepository.findByItemNumber(value);
+    }
+
 }
+
+/*
+ * 2. Artículo sin ubicación fija (flexible)
+ * 
+ * El producto puede estar en distintos BINs o ubicaciones del almacén, y no en
+ * una ubicación "fija".
+ * 
+ * Útil en sistemas WMS (Warehouse Management Systems).
+ */

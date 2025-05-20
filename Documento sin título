@@ -1,0 +1,33 @@
+import axios from "axios";
+
+const sendSale = async () => {
+    try {
+        const response = await axios.post("http://localhost:8080/api/sales", {
+            op: 1,
+            timestamp: new Date().toISOString(),
+            items: [
+                {
+                    articleId: "75042347234732",
+                    quantity: 2,
+                    unitPrice: 350,
+                    totalPrice: 700
+                }
+            ],
+            totalItems: 12,
+            subtotal: 5400,
+            discount: 996,
+            promotionId: "promo2x300", // ID real desde MongoDB
+            total: 5442.40,
+            paymentMethod: "Efectivo",
+            paymentAmount: 5442.40,
+            storeId: "4232" // Asegúrate de que este ID exista en tu colección de determinantes
+        });
+
+        console.log("Venta registrada:", response.data);
+        alert("Venta registrada correctamente");
+
+    } catch (error) {
+        console.error("Error al registrar la venta:", error.response?.data || error.message);
+        alert("Error al registrar la venta");
+    }
+};

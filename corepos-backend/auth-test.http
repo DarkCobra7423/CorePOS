@@ -1,4 +1,4 @@
-###Carla
+### Inicio Carla
 ###Add User
 POST http://localhost:8080/auth/addNewUser
 Content-Type: application/json
@@ -13,7 +13,7 @@ Content-Type: application/json
 ###Welcome
 GET http://localhost:8080/auth/welcome
 
-###Carla
+###Fin Carla
 
 
 ### LOGIN - Obtener token
@@ -34,10 +34,162 @@ Content-Type: application/json
    "password": "admin123"
 }
 
+
 ### ACCESO A ENDPOINT PROTEGIDO (reemplaza el token abajo)
 GET http://localhost:8080/api/articles
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjczNzk3LCJleHAiOjE3NDczMDk3OTd9.mFkRAWcSfqqfhDDGXMm13qfppAEYE6WUSBzPkSLkRQo
 
+### ACCESO A ENDPOINT PROTEGIDO (reemplaza el token abajo)
+GET http://localhost:8080/api/articles/68241fd720c4032ab50fc2f4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjczNzk3LCJleHAiOjE3NDczMDk3OTd9.mFkRAWcSfqqfhDDGXMm13qfppAEYE6WUSBzPkSLkRQo
+
 ###ELIMINAR ARTÍCULO POR ID (protegido)
-DELETE http://localhost:8080/articles/68250f96865eff71ce985c16
+DELETE http://localhost:8080/api/articles/68250f96865eff71ce985c16
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+
+### Buscar artículo por id, upc o itemnumber
+GET http://localhost:8080/api/articles/search?type=upc&value=75012231231213
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+Accept: application/json
+
+### Buscar artículo por id, upc o itemnumber
+GET http://localhost:8080/api/articles/search?value=75012231231213
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+Accept: application/json
+
+###LISTA DE ARTICULOS
+POST http://localhost:8080/api/articles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+Accept: application/json
+
+{
+  "name": "Shampoo para Auto Meguiar's 1L",
+  "price": 65.00,
+  "upc": "7505566778899",
+  "itemNumber": "SHPMEG1L",
+  "size": "1L",
+  "color": "ROJO",
+  "department": 4,
+  "backroomStock": 6,
+  "minStock": 5,
+  "maxStock": 12,
+  "salesFloorStock": 2,
+  "packageQuantity": 10,
+  "previousPrice": 59.99,
+  "cost": 45.00
+}
+
+###LISTA DE ARTICULOS
+POST http://localhost:8080/api/articles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Aceite Mobil 5W-30",
+  "price": 89.99,
+  "upc": "75012231231999",
+  "itemNumber": "32139999",
+  "size": "1L",
+  "color": "NEGRO",
+  "department": 2,
+  "backroomStock": 2,
+  "minStock": 4,
+  "maxStock": 6,
+  "salesFloorStock": 2,
+  "packageQuantity": 12,
+  "previousPrice": 75.00,
+  "cost": 60.00
+}
+
+###LISTA DE ARTICULOS
+POST http://localhost:8080/api/articles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Aceite Mobil 5W-30",
+  "price": 89.99,
+  "upc": "75012231231999",
+  "itemNumber": "32139999",
+  "size": "1L",
+  "color": "NEGRO",
+  "department": 2,
+  "backroomStock": 2,
+  "minStock": 4,
+  "maxStock": 6,
+  "salesFloorStock": 2,
+  "packageQuantity": 12,
+  "previousPrice": 75.00,
+  "cost": 60.00
+}
+
+###LISTA DE ARTICULOS 2
+POST http://localhost:8080/api/articles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Limpiador Multiusos 500ml",
+  "price": 35.50,
+  "upc": "7509988776655",
+  "itemNumber": "LMU50001",
+  "size": "500ml",
+  "color": "VERDE",
+  "department": 5,
+  "backroomStock": 4,
+  "minStock": 6,
+  "maxStock": 15,
+  "salesFloorStock": 3,
+  "packageQuantity": 20,
+  "previousPrice": 32.00,
+  "cost": 25.00
+}
+
+###LISTA DE ARTICULOS 3
+POST http://localhost:8080/api/articles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Aceite Valvoline 10W-40",
+  "price": 78.25,
+  "upc": "7501333444555",
+  "itemNumber": "AV1040",
+  "size": "946ml",
+  "color": "AZUL",
+  "department": 2,
+  "backroomStock": 5,
+  "minStock": 3,
+  "maxStock": 10,
+  "salesFloorStock": 2,
+  "packageQuantity": 12,
+  "previousPrice": 72.00,
+  "cost": 58.50
+}
+
+###LISTA DE ARTICULOS 4
+POST http://localhost:8080/api/articles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYXJrY29icmExIiwicm9sZXMiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjY5OTI0LCJleHAiOjE3NDczMDU5MjR9.j-QNQB6DfI2-0QQ43MPXzOC0IZO0g0ubxNGUO-CGGRM
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Filtro de Aceite Bosch",
+  "price": 99.99,
+  "upc": "7501122334455",
+  "itemNumber": "FABOSCH01",
+  "size": "Estándar",
+  "color": "BLANCO",
+  "department": 3,
+  "backroomStock": 1,
+  "minStock": 4,
+  "maxStock": 8,
+  "salesFloorStock": 1,
+  "packageQuantity": 6,
+  "previousPrice": 89.00,
+  "cost": 70.00
+}

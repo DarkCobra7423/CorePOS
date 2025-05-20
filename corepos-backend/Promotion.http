@@ -1,0 +1,59 @@
+### Crear promoción 1
+POST http://localhost:8080/api/promotion
+Content-Type: application/json
+
+{
+  "articleUpc": "75012231231999",
+  "name": "Promo 2x1",
+  "buyQuantity": 2,
+  "validity": "2025-12-31T23:59:59",
+  "bundlePrice": 50.00
+}
+
+### Crear promoción 2
+POST http://localhost:8080/api/promotion
+Content-Type: application/json
+
+{
+  "articleUpc": "7509988776655",
+  "name": "3x por 100",
+  "buyQuantity": 3,
+  "validity": "2025-11-30T23:59:59",
+  "bundlePrice": 100.00
+}
+
+### Crear promoción 3
+POST http://localhost:8080/api/promotion
+Content-Type: application/json
+
+{
+  "articleUpc": "7501333444555",
+  "name": "Descuento especial",
+  "buyQuantity": 5,
+  "validity": "2025-10-15T23:59:59",
+  "bundlePrice": 200.00
+}
+
+### Crear promoción 4
+POST http://localhost:8080/api/promotion
+Content-Type: application/json
+
+{
+  "articleUpc": "7501122334455",
+  "name": "Combo Ahorro",
+  "buyQuantity": 4,
+  "validity": "2025-09-01T23:59:59",
+  "bundlePrice": 150.00
+}
+
+### Crear promoción 5
+POST http://localhost:8080/api/promotion
+Content-Type: application/json
+
+{
+  "articleUpc": "7506495001360",
+  "name": "Pack Familiar",
+  "buyQuantity": 6,
+  "validity": "2025-08-20T23:59:59",
+  "bundlePrice": 300.00
+}

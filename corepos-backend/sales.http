@@ -1,0 +1,74 @@
+### Crear una venta (POST /api/sales)
+POST http://localhost:8080/api/sales
+Content-Type: application/json
+
+{
+  "op": 1,
+  "timestamp": "2025-05-18T23:00:19.005Z",
+  "items": [
+    {
+      "articleId": "75042347234732",
+      "quantity": 2,
+      "unitPrice": 350.00,
+      "totalPrice": 700.00
+    }
+  ],
+  "totalItems": 2,
+  "subtotal": 700.00,
+  "discount": 0.00,
+  "promotionId": "promo2x300", 
+  "total": 700.00,
+  "paymentMethod": "Efectivo",
+  "paymentAmount": 700.00,
+  "storeId": "4232"
+}
+
+###
+
+### Obtener todas las ventas (GET /api/sales)
+GET http://localhost:8080/api/sales
+
+###
+
+### Obtener una venta por ID (GET /api/sales/{id})
+GET http://localhost:8080/api/sales/{{saleId}}
+
+###
+
+### Eliminar una venta por ID (DELETE /api/sales/{id})
+DELETE http://localhost:8080/api/sales/{{saleId}}
+
+
+
+### Obtener todas las ventas (GET /api/sales)
+GET http://localhost:8080/api/sales
+
+### Obtener una venta por ID (GET /api/sales/{id})
+GET http://localhost:8080/api/sales/682946df4e55003bdf3ca1e3
+
+### Actualizar una venta (PUT /api/sales/{id})
+PUT http://localhost:8080/api/sales/682946df4e55003bdf3ca1e3
+Content-Type: application/json
+
+{
+  //"id": "{{salesId}}",
+  "op": 1,
+  "timestamp": "2025-05-18T03:00:00.000",
+  "items": [],
+  "totalItems": 0,
+  "subtotal": 0,
+  "discount": 0,
+  "promotion": null,
+  "total": 0,
+  "paymentMethod": "Tarjeta",
+  "paymentAmount": 0,
+  "store": {
+    "id": "store-id-001",
+    "name": "Sucursal Centro",
+    "location": "Avenida Principal #123"
+  },
+  "publicityImage": "https://example.com/updated.jpg"
+}
+
+### Eliminar una venta (DELETE /api/sales/{id})
+DELETE http://localhost:8080/api/sales/682946df4e55003bdf3ca1e3

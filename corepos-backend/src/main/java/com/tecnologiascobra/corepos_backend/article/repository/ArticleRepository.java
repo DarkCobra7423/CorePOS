@@ -4,9 +4,9 @@
  */
 package com.tecnologiascobra.corepos_backend.article.repository;
 
+import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-
 import com.tecnologiascobra.corepos_backend.article.model.Article;
 
 /**
@@ -16,5 +16,7 @@ import com.tecnologiascobra.corepos_backend.article.model.Article;
 
 @Repository
 public interface ArticleRepository extends MongoRepository<Article, String> {
-    // Aquí puedes agregar consultas personalizadas si las necesitas
+    Optional<Article> findByUpc(String upc);
+    Optional<Article> findById(String id);
+    Optional<Article> findByItemNumber(String itemNumber);
 }

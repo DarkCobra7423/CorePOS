@@ -7,13 +7,18 @@ package com.tecnologiascobra.corepos_backend.article.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Data;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
  * @author darkcobra7423
  */
-
+@Data
 public class ArticleRequest {
 
     @NotBlank(message = "El nombre del artículo no puede estar vacío")
@@ -38,7 +43,10 @@ public class ArticleRequest {
     private int backroomStock;
 
     // @PositiveOrZero(message = "El stock total no puede ser negativo")
-    private int totalStock;
+    // private int totalStock;
+    private int minStock;
+
+    private int maxStock;
 
     // @PositiveOrZero(message = "El stock en piso de venta no puede ser negativo")
     private int salesFloorStock;
@@ -52,108 +60,20 @@ public class ArticleRequest {
     @PositiveOrZero(message = "El costo no puede ser negativo")
     private BigDecimal cost;
 
-    // Getters y Setters
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public String getUpc() {
-        return upc;
-    }
-
-    public void setUpc(String upc) {
-        this.upc = upc;
-    }
-
-    public String getItemNumber() {
-        return itemNumber;
-    }
-
-    public void setItemNumber(String itemNumber) {
-        this.itemNumber = itemNumber;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public int getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(int department) {
-        this.department = department;
-    }
-
-    public int getBackroomStock() {
-        return backroomStock;
-    }
-
-    public void setBackroomStock(int backroomStock) {
-        this.backroomStock = backroomStock;
-    }
-
+    @JsonIgnore
     public int getTotalStock() {
-        return totalStock;
+        return backroomStock + salesFloorStock;
     }
 
-    public void setTotalStock(int totalStock) {
-        this.totalStock = totalStock;
+    @JsonIgnore
+    public double getMargin() {
+        if (price == null || cost == null || price.compareTo(BigDecimal.ZERO) == 0) {
+            return 0.0;
+        }
+        return price.subtract(cost)
+                .divide(price, 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100))
+                .doubleValue();
     }
 
-    public int getSalesFloorStock() {
-        return salesFloorStock;
-    }
-
-    public void setSalesFloorStock(int salesFloorStock) {
-        this.salesFloorStock = salesFloorStock;
-    }
-
-    public int getPackageQuantity() {
-        return packageQuantity;
-    }
-
-    public void setPackageQuantity(int packageQuantity) {
-        this.packageQuantity = packageQuantity;
-    }
-
-    public BigDecimal getPreviousPrice() {
-        return previousPrice;
-    }
-
-    public void setPreviousPrice(BigDecimal previousPrice) {
-        this.previousPrice = previousPrice;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
-    }
 }

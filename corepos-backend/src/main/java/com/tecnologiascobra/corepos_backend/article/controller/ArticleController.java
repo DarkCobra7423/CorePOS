@@ -6,10 +6,6 @@ package com.tecnologiascobra.corepos_backend.article.controller;
 
 import com.tecnologiascobra.corepos_backend.article.model.Article;
 import com.tecnologiascobra.corepos_backend.article.service.ArticleService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import com.tecnologiascobra.corepos_backend.article.dto.ArticleRequest;
 
+import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,65 +22,81 @@ import java.util.Optional;
  *
  * @author darkcobra7423
  */
+
 @RestController
 @RequestMapping("/api/articles")
 @Validated
+// @CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor
 public class ArticleController {
 
-    @Autowired
-    private ArticleService articleService;
+    private final ArticleService articleService;
 
-    @Operation(summary = "Crear un nuevo artículo")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Artículo creado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
-    })
-    @PreAuthorize("hasRole('ADMIN')") // Formato consistente sin ROLE_
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Article> createArticle(@RequestBody @Valid ArticleRequest dto) {
-        Article article = new Article(dto.getName(), dto.getPrice(),
-                dto.getUpc(), dto.getItemNumber(), dto.getSize(),
-                dto.getColor(), dto.getDepartment(),
-                dto.getBackroomStock(), dto.getTotalStock(),
-                dto.getSalesFloorStock(), dto.getPackageQuantity(),
-                dto.getPreviousPrice(), dto.getCost());
+        Article article = Article.builder()
+                .name(dto.getName())
+                .price(dto.getPrice())
+                .upc(dto.getUpc())
+                .itemNumber(dto.getItemNumber())
+                .size(dto.getSize())
+                .color(dto.getColor())
+                .department(dto.getDepartment())
+                .backroomStock(dto.getBackroomStock())
+                .minStock(dto.getMinStock())
+                .maxStock(dto.getMaxStock())
+                .salesFloorStock(dto.getSalesFloorStock())
+                .packageQuantity(dto.getPackageQuantity())
+                .previousPrice(dto.getPreviousPrice())
+                .cost(dto.getCost())
+                .build();
 
         Article guardado = articleService.createArticle(article);
         return new ResponseEntity<>(guardado, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Obtener todos los artículos")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER')") // Mismo formato
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER')")
     public ResponseEntity<List<Article>> getAllArticles() {
-        List<Article> articles = articleService.getAllArticles();
-        return new ResponseEntity<>(articles, HttpStatus.OK);
+        return ResponseEntity.ok(articleService.getAllArticles());
     }
 
-    @Operation(summary = "Obtener un artículo por ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artículo encontrado"),
-            @ApiResponse(responseCode = "404", description = "Artículo no encontrado")
-    })
     @GetMapping("/{id}")
     public ResponseEntity<Article> obtenerArticlePorId(@PathVariable String id) {
-        Optional<Article> article = articleService.getArticleById(id);
-        return article.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return articleService.getArticleById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Actualizar un artículo")
     @PutMapping("/{id}")
-    public ResponseEntity<Article> actualizarArticle(@PathVariable String id, @RequestBody @Validated Article article) {
-        Article articleActualizado = articleService.updateArticle(id, article);
-        return articleActualizado != null ? new ResponseEntity<>(articleActualizado, HttpStatus.OK)
+    public ResponseEntity<Article> actualizarArticle(@PathVariable String id, @RequestBody @Valid Article article) {
+        Article actualizado = articleService.updateArticle(id, article);
+        return actualizado != null ? ResponseEntity.ok(actualizado)
                 : ResponseEntity.notFound().build();
     }
 
-    @Operation(summary = "Eliminar un artículo")
-    @PreAuthorize("hasRole('ADMIN')") // Mismo formato
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminarArticle(@PathVariable String id) {
-        return articleService.deleteArticle(id) ? ResponseEntity.noContent().build()
+        return articleService.deleteArticle(id)
+                ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/search")
+    // @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER')")
+    public ResponseEntity<Article> search(@RequestParam String value) {
+        return articleService.findByValue(value)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/upc")
+    // @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER')")
+    public ResponseEntity<Article> getUpc(@RequestParam String value) {
+        return articleService.findByValue(value)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

@@ -9,18 +9,27 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+//import jakarta.validation.constraints.NotBlank;
+//import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+//import lombok.NoArgsConstructor;
+//import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  *
  * @author darkcobra7423
  */
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import java.math.BigDecimal;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "article")
+@Data
+@AllArgsConstructor
+@Builder
+// @NoArgsConstructor
 public class Article {
 
     @Id
@@ -50,7 +59,10 @@ public class Article {
     private int backroomStock;
 
     // @NotEmpty
-    private int totalStock;
+    // private int totalStock;
+    private int minStock;
+
+    private int maxStock;
 
     // @NotEmpty
     private int salesFloorStock;
@@ -67,144 +79,18 @@ public class Article {
     public Article() {
     }
 
-    /*
-     * public Article(String nombre, double precio) {
-     * this.nombre = nombre;
-     * this.precio = precio;
-     * }
-     */
-
-    public Article(String name, BigDecimal price, String upc, String itemNumber, String size, String color,
-            int department, int backroomStock, int totalStock, int salesFloorStock,
-            int packageQuantity, BigDecimal previousPrice, BigDecimal cost) {
-
-        this.name = name;
-        this.price = price;
-        this.upc = upc;
-        this.itemNumber = itemNumber;
-        this.size = size;
-        this.color = color;
-        this.department = department;
-        this.backroomStock = backroomStock;
-        this.totalStock = totalStock;
-        this.salesFloorStock = salesFloorStock;
-        this.packageQuantity = packageQuantity;
-        this.previousPrice = previousPrice;
-        this.cost = cost;
-    }
-
-    // Getters y setters
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public String getUpc() {
-        return upc;
-    }
-
-    public void setUpc(String upc) {
-        this.upc = upc;
-    }
-
-    public String getItemNumber() {
-        return itemNumber;
-    }
-
-    public void setItemNumber(String itemNumber) {
-        this.itemNumber = itemNumber;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public int getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(int department) {
-        this.department = department;
-    }
-
-    public int getBackroomStock() {
-        return backroomStock;
-    }
-
-    public void setBackroomStock(int backroomStock) {
-        this.backroomStock = backroomStock;
-    }
-
     public int getTotalStock() {
-        return totalStock;
+        return backroomStock + salesFloorStock;
     }
 
-    public void setTotalStock(int totalStock) {
-        this.totalStock = totalStock;
-    }
-
-    public int getSalesFloorStock() {
-        return salesFloorStock;
-    }
-
-    public void setSalesFloorStock(int salesFloorStock) {
-        this.salesFloorStock = salesFloorStock;
-    }
-
-    public int getPackageQuantity() {
-        return packageQuantity;
-    }
-
-    public void setPackageQuantity(int packageQuantity) {
-        this.packageQuantity = packageQuantity;
-    }
-
-    public BigDecimal getPreviousPrice() {
-        return previousPrice;
-    }
-
-    public void setPreviousPrice(BigDecimal previousPrice) {
-        this.previousPrice = previousPrice;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
+    public double getMargin() {
+        if (price == null || cost == null || price.compareTo(BigDecimal.ZERO) == 0) {
+            return 0.0;
+        }
+        return price.subtract(cost)
+                .divide(price, 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100))
+                .doubleValue();
     }
 
 }

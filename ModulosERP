@@ -154,3 +154,69 @@ Estas funciones están pensadas para empresas más grandes, que requieren automa
     Para apps móviles, integraciones con terceros o BI (Power BI, Tableau)
 
 
+
+
+
+
+🧾 Explicación de cada título:
+🔍 Buscar Artículo
+
+    Función: Permite buscar productos específicos en el inventario por código, nombre, SKU, etc.
+
+    Ejemplo de uso: El empleado escanea o escribe el código de un artículo para ver su existencia o ubicación.
+
+🔄 Cambio de existencia
+
+    Función: Ajuste manual de la cantidad de inventario disponible para un artículo.
+
+    Ejemplo de uso: Si hay una merma, extravío, o corrección tras un conteo físico.
+
+📜 Historial de Picks
+
+    Función: Muestra un historial de artículos "pickeados" (seleccionados) para surtido o pedidos.
+
+    Ejemplo de uso: Ver qué artículos se han recogido del almacén para una orden.
+
+📦 Cajas Pedi x Res
+
+    Función posible: Reporte de cajas pedidas vs recibidas.
+
+    "Pedi x Res" podría significar:
+
+        "Pedidas por el sistema vs Recibidas físicamente"
+
+        Control de diferencias en recepción de mercancía
+
+🪛 Cambio Cap. Estante
+
+    Función: Ajusta la capacidad asignada a un estante o ubicación en el almacén.
+
+    Ejemplo de uso: Si se reorganiza el espacio físico, este módulo permite actualizar cuántas unidades caben en un estante.
+
+💰 Venta
+
+    Función: Acceso a funcionalidades relacionadas con ventas de artículos.
+
+    Ejemplo de uso: Registrar una venta manual, hacer devoluciones, ver precios o promociones.
+
+📦 Entrega
+
+    Función: Control de entregas de pedidos a clientes o entre tiendas.
+
+    Ejemplo de uso: Confirmar que un pedido fue empacado y entregado correctamente.
+
+📉 Escaneo de agotados
+
+    Función: Registro de productos agotados usando escáner.
+
+    Ejemplo de uso: Empleado recorre la tienda o almacén escaneando artículos faltantes para generar pedidos automáticos o reportes.
+
+🧠 ¿Para qué sirve tener estos módulos?
+
+    Ayuda a organizar las tareas del personal.
+
+    Mejora la precisión del inventario.
+
+    Facilita reabastecimientos y toma de decisiones en tiempo real.
+
+    Permite auditar y rastrear actividades (como picks, entregas, cambios).

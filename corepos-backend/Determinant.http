@@ -1,0 +1,27 @@
+### Crear una venta (POST /api/sales)
+POST http://localhost:8080/api/determinant
+Content-Type: application/json
+
+{
+  //"id": "D001",
+  "name": "Sucursal Centro",
+  "determinant": "4232",
+  "address": "Av. Reforma #100, Centro",
+  "city": "Ciudad de México",
+  "state": "CDMX",
+  "zipCode": "06000",
+  "format": "Retail",
+  "storeType": "Flagship",
+  "managerName": "Carlos Ángel",
+  "isActive": true,
+  "openingDate": "2025-05-19",
+  "timezone": "America/Mexico_City",
+  "businessHours": {
+    "lunes": "08:00-18:00",
+    "sabado": "09:00-14:00",
+    "domingo": "cerrado"
+  }
+}
+
+
+###

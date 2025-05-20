@@ -26,28 +26,30 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
+                                "/swagger-ui.html",
+                                "/api/**",
+                                "/error")
+                        .permitAll()
                         .anyRequest().authenticated());
 
         return httpSecurity.build();
     }
 }
-    /*
-     * @Bean
-     * public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)
-     * throws Exception {
-     * httpSecurity
-     * .csrf(csrf -> csrf.disable())
-     * .authorizeHttpRequests(auth -> auth
-     * .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/**",
-     * "/swagger-ui/**",
-     * "/v3/api-docs/**", "/swagger-ui.html")
-     * .permitAll()
-     * .anyRequest().authenticated())
-     * .httpBasic(httpBasic -> {
-     * }); // Autenticación básica (útil solo para pruebas o backoffice)
-     * 
-     * return httpSecurity.build();
-     * }
-     */
+/*
+ * @Bean
+ * public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)
+ * throws Exception {
+ * httpSecurity
+ * .csrf(csrf -> csrf.disable())
+ * .authorizeHttpRequests(auth -> auth
+ * .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/**",
+ * "/swagger-ui/**",
+ * "/v3/api-docs/**", "/swagger-ui.html")
+ * .permitAll()
+ * .anyRequest().authenticated())
+ * .httpBasic(httpBasic -> {
+ * }); // Autenticación básica (útil solo para pruebas o backoffice)
+ * 
+ * return httpSecurity.build();
+ * }
+ */

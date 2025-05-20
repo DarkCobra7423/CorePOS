@@ -1,20 +1,225 @@
+import { useEffect, useState } from 'react';
 import styled from "styled-components";
+import { COLORS } from '../constants/Colors';
+import { createSale, getPromotion, getPromotionList } from '../services/SalesService';
+import { getArticleUpc } from '../services/ArticleService';
+import { pingServer } from '../services/SystemService';
 
 function Sales() {
+    const [isFormatted, setIsFormatted] = useState(false); // Para saber si estamos en modo pago
+    const [inputEntry, setInputEntry] = useState('');
+    const [paymentAmount, setPaymentAmount] = useState(0);  // Monto ingresado
+    const [total, setTotal] = useState(0.00); // Total de la venta
+    const [change, setChange] = useState(0);  // Monto de cambio
+
+    const [totalItems, setTotalItems] = useState(4);
+    const [store, setStore] = useState("4232");
+    const [subtotal, setSubtotal] = useState(0.00);
+    const [discount, setDiscount] = useState(0.00);
+
+    const [quantity, setQuantity] = useState(1);
+    const [unitPrice, setUnitPrice] = useState(0);
+    const [totalPrice, settotalPrice] = useState(0);
+    const [paymentMethod, setPaymentMethod] = useState('EFECTIVO');
+    const [promotion, setPromotion] = useState(null);
+    const [trans, setTrans] = useState('4812');
+    const [items, setItems] = useState([]);
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [serverStatus, setServerStatus] = useState("Offline");
+
+
+    const [op, setOp] = useState('0073');
+    const [opName, getOpName] = useState('CARLOS D. ANGEL PADILLA');
+
+    const entryUser = async () => {
+        // Si estamos en modo de pago, procesamos el cobro
+        if (isFormatted) {
+            const payment = parseFloat(inputEntry.replace(/[^0-9.-]+/g, ""));
+            if (payment < total) {
+                alert("El pago es insuficiente. Ingresa una cantidad mayor.");
+                setChange(0);
+            } else {
+                const calculatedChange = payment - total;
+                setChange(calculatedChange);
+                alert(`Pago realizado. El cambio es: $${calculatedChange.toFixed(2)}`);
+            }
+        } else {
+            // Aquí procesamos la entrada como UPC de un artículo
+            // Se supone que `entryUser` agrega un artículo a la lista de productos
+            console.log("Procesando UPC: ", inputEntry);
+            // Lógica para agregar el artículo, ya la tienes implementada
+            try {
+                const article = await getArticleUpc(inputEntry);
+                if (article) {
+                    const existingItemIndex = items.findIndex(item => item.upc === article.upc);
+
+                    // Si el artículo ya está en la lista, actualiza la cantidad
+                    if (existingItemIndex !== -1) {
+                        const updatedItems = [...items];
+                        updatedItems[existingItemIndex].quantity += quantity;  // Suma la nueva cantidad
+                        updatedItems[existingItemIndex].totalPrice = updatedItems[existingItemIndex].unitPrice * updatedItems[existingItemIndex].quantity;
+                        setItems(updatedItems);
+                    } else {
+                        // Si no está en la lista, lo añade
+                        const newItem = {
+                            upc: article.upc,
+                            articleName: article.name,
+                            quantity: quantity,
+                            unitPrice: article.price,
+                            totalPrice: article.price * quantity
+                        };
+                        setItems([...items, newItem]);
+                    }
+
+                    // Si hay promoción, puedes manejarlo también aquí
+                    const promo = await getPromotionList(article.upc, quantity);
+                    if (promo) {
+                        const transformed = {
+                            id: promo.id,
+                            articleId: promo.article,
+                            name: promo.name,
+                            buyQuantity: promo.buyQuantity,
+                            validity: promo.validity,
+                            bundlePrice: promo.bundlePrice,
+                        };
+                        setPromotion(transformed);
+                    } else {
+                        setPromotion(null);
+                    }
+                } else {
+                    alert("Artículo no encontrado.");
+                }
+            } catch (error) {
+                console.error("Error al consultar artículo/promoción:", error);
+                alert("Error en la búsqueda.");
+            }
+        }
+    };
+
+    useEffect(() => {
+        // Calcular el subtotal sumando el total de cada artículo
+        const newSubtotal = items.reduce((acc, item) => acc + item.totalPrice, 0);
+        setSubtotal(newSubtotal);
+
+        // Calcular el total restando el descuento del subtotal
+        const newTotal = newSubtotal - discount;
+        setTotal(newTotal);
+
+    }, [items, discount]); // Este efecto se ejecuta cuando `items` o `discount` cambian
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000); // actualiza cada segundo
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const formatDate = (date) =>
+        date.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: '2-digit' });
+
+    const formatTime = (date) =>
+        date.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+
+    useEffect(() => {
+        if (unitPrice !== 0 && quantity !== 0) {
+            const result = Number((unitPrice * quantity).toFixed(2));
+            console.log(`Recalculando totalPrice: ${unitPrice} * ${quantity} = ${result}`);
+            settotalPrice(result);
+        }
+    }, [unitPrice, quantity]);
+
+    useEffect(() => {
+        document.body.classList.add('no-scroll');
+
+        return () => {
+            document.body.classList.remove('no-scroll');
+        };
+    }, []);
+
+    const inputChange = (event) => {
+        let rawValue = event.target.value.replace(/\D/g, ''); // Eliminar no números
+
+        if (isFormatted) {
+            // Si estamos en modo pago, formateamos la entrada
+            while (rawValue.length < 9) {
+                rawValue = '*' + rawValue;
+            }
+            const cents = rawValue.slice(-2);
+            const intPart = rawValue.slice(0, -2);
+            const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            const formattedValue = `${formattedInt}.${cents}`;
+            setInputEntry(formattedValue);
+        } else {
+            // Si no estamos en modo pago, simplemente mostramos los números sin formato
+            setInputEntry(rawValue);
+        }
+    };
+
+
+    const checkServerStatus = async () => {
+        const isOnline = await pingServer();
+        setServerStatus(isOnline ? "Online" : "Offline");
+    };
+
+    useEffect(() => {
+        checkServerStatus();
+        const interval = setInterval(checkServerStatus, 10000); // cada 10 segundos
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            entryUser(); // Procesa la entrada al presionar Enter
+            setInputEntry('');
+        }
+        if (e.key === '+') {
+            setIsFormatted(!isFormatted); // Cambia entre formato de pago y no pago
+        }
+    };
+
+    const handleSubmitSale = async () => {
+        const saleRequest = {
+            op: 1,
+            //trans: trans,
+            timestamp: new Date().toISOString(),
+            items: items,  // Usa el array de items
+            totalItems: items.length,
+            subtotal: subtotal,
+            discount: discount,
+            promotionId: null,
+            total: total,
+            paymentMethod: "Efectivo",
+            paymentAmount: 700.00,
+            storeId: store
+        };
+
+        try {
+            const result = await createSale(saleRequest);
+            console.log("Venta creada:", result);
+            alert("Venta registrada correctamente");
+        } catch (err) {
+            alert("Ocurrió un error al registrar la venta");
+        }
+    };
+
+
+
+
     return (
         <FullScreenWrapper>
             <Container>
                 <ContainerPromotion>
-                    <AppliedDiscount>UD. AHORRO: 996.00</AppliedDiscount>
-                    <Promotion>CASTROL 2x$300 7.00</Promotion>
+                    <AppliedDiscount>UD. AHORRO: {discount.toFixed(2)}</AppliedDiscount>
+                    <Promotion>{promotion && promotion.name + ' ' + discount.toFixed(2)}</Promotion>
                 </ContainerPromotion>
                 <ContainerTotal>
                     <h2>Total:</h2>
-                    <span><b><span style={{ fontSize: '50px' }}>$</span> 5,442.40</b></span>
+                    <span><b><span style={{ fontSize: '50px' }}>$</span> {total.toFixed(2)}</b></span>
                 </ContainerTotal>
             </Container>
 
-            <Item><span>Items:    12</span></Item>
+            <Item><span>Items:    {totalItems}</span></Item>
 
             <ScrollArea>
                 <ScrollableProductList>
@@ -26,48 +231,16 @@ function Sales() {
                                     <th>Monto</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-                                <tr>
-                                    <td><span>###</span>75042347234732<span>#</span><br /> Castrol EDGE 5W-30 K 1L</td>
-                                    <td>$350.00</td>
-                                </tr>
-
+                            <tbody style={{ fontSize: '30px' }}>
+                                {items.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>
+                                            <span>## </span>{item.upc} #<span style={{ wordSpacing: '3rem' }}> ${item.unitPrice.toFixed(2)} x {item.quantity}</span><br />
+                                            {item.articleName}
+                                        </td>
+                                        <td>${item.totalPrice.toFixed(2)}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </TableWrapper>
@@ -78,19 +251,44 @@ function Sales() {
                 </ScrollableProductList>
             </ScrollArea>
 
-            <Container style={{ background: '#fff' }}>
+            <Container style={{ background: COLORS.cGlobalBackground }}>
                 <ContainerSubtotal>
-                    <p>TOTAL $ 5,442.40</p>
-                    <h1>EFECTIVO *,***,***.**</h1>
+                    <p>Subtotal $ {subtotal.toFixed(2)}</p>
+                    <h1>
+                        <input
+                            type="text"
+                            value={inputEntry}
+                            onChange={inputChange}
+                            onKeyDown={handleKeyDown}
+                            placeholder={isFormatted ? paymentMethod + ' *,***,***.**' : 'ARTICULO'}
+                        />
+                        {isFormatted && change > 0 && (
+                            <div>
+                                <h3>Cambio: ${change.toFixed(2)}</h3>
+                            </div>
+                        )}
+                    </h1>
                 </ContainerSubtotal>
                 <ContainerLogo>
                     <img src="https://cdn.worldvectorlogo.com/logos/castrol-4.svg" alt="" />
                 </ContainerLogo>
             </Container>
 
+            <StatusBar>
+                <span>{formatDate(currentTime)}</span>
+                <span>{formatTime(currentTime)}</span>
+                <span>Operador: {opName}</span>
+                <span>Local: {store}   </span>
+                <span>Pos: {op}   </span>
+                <span>Tran: {trans}   </span>
+                <span>Status: {serverStatus}</span>
+                <button onClick={handleSubmitSale}>Registrar Venta</button>
+            </StatusBar>
         </FullScreenWrapper >
     );
 }
+
+
 
 const FullScreenWrapper = styled.div`
   height: 100vh;
@@ -99,6 +297,7 @@ const FullScreenWrapper = styled.div`
   flex-direction: column;
   padding: 1rem;
   box-sizing: border-box;
+  padding-bottom: 0px;
 `;
 
 const ScrollableProductList = styled.div`
@@ -111,7 +310,7 @@ const ScrollableProductList = styled.div`
 
 const Container = styled.div`
     border-radius: 1rem !important;
-    background: #c9cbd8;
+    background: ${COLORS.cGlobalBackground};
     display: flex;
     flex-wrap: wrap;
 
@@ -147,15 +346,13 @@ const TableWrapper = styled.div`
   th, td {
     text-align: left;
     padding: 0.5rem;
-    //border-bottom: 1px solid #c9cbd8;
     text-transform: uppercase;
   }
 
   thead {
     position: sticky;
     top: 0;
-    background-color: #d4d6e3;
-    //color: #fff;
+    background-color: ${COLORS.cWhite};
 
     overflow: hidden;         /* NECESARIO */
     border-radius: 0 0 1rem 1rem; /* Solo las esquinas inferiores */
@@ -163,7 +360,7 @@ const TableWrapper = styled.div`
   }
 
   thead th {
-    background-color: #d4d6e3; /* Necesario para ver el redondeo */
+    background-color: ${COLORS.cWhite} /* Necesario para ver el redondeo */
   }
 
   thead th:first-child {
@@ -189,7 +386,7 @@ const ContainerPromotion = styled.div`
     0 0 auto;
     width: 79%;
     font-weight: bold;
-
+    background: ${COLORS.cWhite};
     border-radius: 1rem;
     border-top-width: 1px;
     border-top-style: solid;
@@ -199,14 +396,15 @@ const ContainerPromotion = styled.div`
     border-right-style: solid;
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-color: #8a8c9c;
+    border-color: ${COLORS.cGlobalBorder};
 `;
 
 const ContainerTotal = styled.div`
+    background: ${COLORS.cGlobalBackground};
     margin-bottom: 0px;
     margin-top: 0px;
-    flex:
-    0 0 auto;
+    flex: 0 0 auto;
+    padding-left: 5px;
     width: 20%;
 
     span{
@@ -221,6 +419,7 @@ const AppliedDiscount = styled.h1`
 
 const Promotion = styled.span`
     margin-left: 25px;
+    text-transform: uppercase;
 `;
 
 const Item = styled.div`
@@ -228,8 +427,7 @@ const Item = styled.div`
     align-items: flex-end; /* Alinea el texto al fondo */
     font-weight: bold; /* Hace el texto en negritas */
     padding: 10px 0; /* Agrega un pequeño margen para que no esté pegado al borde */
-    //background: #c9cbd8;
-    border: 1px solid #8a8c9c;
+    border: 1px solid ${COLORS.cGlobalBorder};
     border-radius: 1rem;
     width: 79%;
 
@@ -245,7 +443,8 @@ const Publicity = styled.div`
 const ContainerSubtotal = styled.div`
   width: 80%;
   border-radius: 1rem;
-  border: 1px solid #8a8c9c;
+  border: 1px solid ${COLORS.cGlobalBorder};
+  background: ${COLORS.cWhite};
   text-align: center;
   margin-top: 1rem;
   flex-shrink: 0;
@@ -256,6 +455,47 @@ const ContainerSubtotal = styled.div`
     margin-bottom: 15px;
     margin-top: 15px;
   }
+
+  input{
+    font-size: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+    border: none;
+
+    width: 330px; /* Ancho inicial */
+    min-width: 330px; /* Ancho mínimo */
+    max-width: 500px; /* Ancho máximo */
+    transition: width 0.2s ease; /* Transición suave para el ajuste de ancho */
+    text-align: center;
+  }
+
+  input:focus-visible {
+    border: none;
+    outline: none;
+  }
+
+  input::placeholder {
+    color: black;
+  }
+
+`;
+
+const StatusBar = styled.div`
+    background-color: ${COLORS.cGlobalBackground};
+    color: ${COLORS.cBlack};
+    padding: 8px 12px;
+    font-family: Arial, sans-serif;
+    font-size: 1.1rem;
+    display: flex;
+    gap: 20px; /* Espacio entre los elementos */
+    //border-top: 1px solid #c01e1e;
+    //border-bottom: 1px solid #ccc;
+    align-items: center;
+
+    span{
+          white-space: nowrap;
+    }
 `;
 
 
