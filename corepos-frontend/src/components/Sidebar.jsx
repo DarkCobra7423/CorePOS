@@ -9,6 +9,7 @@ import {
   faWrench,
   faBoxes,
   faCashRegister,
+  faShoppingBag
 } from '@fortawesome/free-solid-svg-icons';
 import { COLORS } from '../constants/Colors';
 
@@ -40,11 +41,11 @@ function Sidebar() {
           </SidebarItem>
 
           <SidebarItem>
-            <SidebarLink href="#">
+            <SidebarLink href="shopping">
               <IconWrapper className="rad-bg-primary">
-                <FontAwesomeIcon icon={faLineChart} />
+                <FontAwesomeIcon icon={faShoppingBag} />
               </IconWrapper>
-              <SidebarItemText $isOpen={isOpen}>Call trends</SidebarItemText>
+              <SidebarItemText $isOpen={isOpen}>Shopping</SidebarItemText>
             </SidebarLink>
           </SidebarItem>
 
@@ -58,7 +59,7 @@ function Sidebar() {
           </SidebarItem>
 
           <SidebarItem>
-            <SidebarLink href="#">
+            <SidebarLink href="configuration">
               <IconWrapper className="rad-bg-violet">
                 <FontAwesomeIcon icon={faWrench} />
               </IconWrapper>

@@ -4,6 +4,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSidebar } from '../components/SidebarContext'; // Asegúrate del path
 import { COLORS } from '../constants/Colors';
+import TitleGlobal from '../components/TitleGlobal';
+import avatar from '../asset/avatar.png';
 
 function Navigation() {
 
@@ -18,7 +20,8 @@ function Navigation() {
       </SectionLeft>
 
       <SectionCenter>
-        <HeaderTitle>RADAR</HeaderTitle>
+        {/* "CorePos: El corazón de tus operaciones comerciales." */}
+        <TitleGlobal>CorePos</TitleGlobal>
       </SectionCenter>
 
       <SectionRight>
@@ -38,7 +41,7 @@ function Navigation() {
         <NavItem>
 
           <ProfileImg
-            src="https://lh4.googleusercontent.com/-GXmmnYTuWkg/AAAAAAAAAAI/AAAAAAAAAAA/oK6DEDS7grM/w56-h56/photo.jpg"
+            src={avatar}
             alt="Profile"
           />
 

@@ -17,6 +17,12 @@ import com.tecnologiascobra.corepos_backend.article.model.Article;
 @Repository
 public interface ArticleRepository extends MongoRepository<Article, String> {
     Optional<Article> findByUpc(String upc);
+
     Optional<Article> findById(String id);
+
     Optional<Article> findByItemNumber(String itemNumber);
+
+    Optional<Article> findByUpcAndItemNumber(String upc, String itemNumber);
+
+    boolean existsByUpcAndItemNumber(String upc, String itemNumber);
 }

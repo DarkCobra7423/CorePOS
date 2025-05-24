@@ -1,39 +1,37 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import TitleGlobal from './TitleGlobal';
 
 
 
-const ModalComponent = ({ name, title, content }) => {
-    const [show, setShow] = useState(false);
+const ModalComponent = ({ name, title, children, size, onClick, show, onClose, onOpen, button }) => {
+  return (
+    <div>
+      {/* Botón que dispara el modal */}
+      <ButtonModal primary onClick={(e) => {
+        e.preventDefault();
+        if (onOpen) onOpen(); // desde el padre
+      }}>
+        {name}
+      </ButtonModal>
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    return (
-        <div>
-            {/* Botón que dispara el modal */}
-            <Button primary onClick={handleShow}>
-                {name}
-            </Button>
-
-            {/* Modal */}
-            <ModalOverlay show={show}>
-                <ModalContainer>
-                    <ModalHeader>
-                        <ModalTitle>{title}</ModalTitle>
-                        <CloseButton onClick={handleClose}>&times;</CloseButton>
-                    </ModalHeader>
-                    <ModalBody>
-                        {content}
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button onClick={handleClose}>Close</Button>
-                        <Button primary>Save changes</Button>
-                    </ModalFooter>
-                </ModalContainer>
-            </ModalOverlay>
-        </div>
-    );
+      {/* Modal */}
+      <ModalOverlay show={show}>
+        <ModalContainer size={size}>
+          <ModalHeader>
+            <ModalTitle><TitleGlobal>{title}</TitleGlobal></ModalTitle>
+            <CloseButton onClick={onClose}>&times;</CloseButton>
+          </ModalHeader>
+          <ModalBody>{children}</ModalBody>
+          <ModalFooter>
+            {button}
+            <Button onClick={onClose}>Cerrar</Button>
+            <Button onClick={onClick} primary>Guardar</Button>
+          </ModalFooter>
+        </ModalContainer>
+      </ModalOverlay>
+    </div>
+  );
 };
 
 // Estilos para el modal y el fondo
@@ -53,8 +51,20 @@ const ModalOverlay = styled.div`
 const ModalContainer = styled.div`
   background-color: white;
   border-radius: 8px;
-  max-width: 500px;
+  max-width: ${({ size }) => (size ? size : '500px')};
   width: 100%;
+  padding: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-out;
+
+
+  background-color: white;
+  border-radius: 8px;
+  max-width: ${({ size }) => (size ? size : '500px')};
+  width: 100%;
+  max-height: 80vh; /* limita la altura del modal */
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.3s ease-out;
@@ -79,6 +89,8 @@ const CloseButton = styled.button`
   font-size: 20px;
   color: #aaa;
   cursor: pointer;
+  font-size: 3rem;
+
   &:hover {
     color: #333;
   }
@@ -87,6 +99,11 @@ const CloseButton = styled.button`
 const ModalBody = styled.div`
   padding: 20px 0;
   color: #555;
+
+  padding: 20px 0;
+  color: #555;
+  max-height: 60vh; /* o el valor que prefieras */
+  overflow-y: auto;
 `;
 
 const ModalFooter = styled.div`
@@ -94,20 +111,52 @@ const ModalFooter = styled.div`
   justify-content: flex-end;
   gap: 10px;
   padding-top: 10px;
+
+
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
 `;
 
-const Button = styled.button`
+const Button = styled.a`
+
+ /*  text-decoration: none;
+  color: #007bff;
+  //font-weight: 500;
+  border: none;
+  font-size: 1rem;
+
+  &:hover {
+    text-decoration: underline;
+  } */
+  
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
   background-color: ${(props) => (props.primary ? '#007bff' : '#6c757d')};
-  color: white;
+  color: white !important;
+  text-decoration: none !important;
 
   &:hover {
     background-color: ${(props) =>
-        props.primary ? '#0056b3' : '#5a6268'};
+    props.primary ? '#0056b3' : '#5a6268'};
+  } 
+`;
+
+const ButtonModal = styled.button`
+  border: none;
+  background: transparent;
+
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
   }
 `;
 

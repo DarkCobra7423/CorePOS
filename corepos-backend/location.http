@@ -1,0 +1,32 @@
+### Crear una ubicación
+POST http://localhost:8080/api/article-locations
+Content-Type: application/json
+
+{
+  "upc": "7506495001360",
+  "itemNumber": "32139999",
+  "storeId": "4232",
+  "salesFloor": {
+    "modular": "MOD-A3",
+    "aisle": "Pasillo 5",
+    "shelf": "Repisa 2",
+    "position": "Posición 4"
+  },
+  "backroom": {
+    "bin": "BIN-12",
+    "zone": "ZONA-A",
+    "level": "Nivel 2"
+  }
+}
+
+### Obtener todas las ubicaciones
+GET http://localhost:8080/api/article-locations
+
+### Obtener ubicaciones por tienda
+GET http://localhost:8080/api/article-locations/store/SUC001
+
+### Obtener ubicación por UPC y tienda
+GET http://localhost:8080/api/article-locations/7501001234567/SUC001
+
+### Eliminar ubicación (reemplaza el ID)
+DELETE http://localhost:8080/api/article-locations/{{locationId}}

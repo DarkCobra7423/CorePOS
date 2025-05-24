@@ -9,6 +9,8 @@ import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { showArticle, getListArticle, searchArticle } from '../services/ArticleService';
 import ModalComponent from '../components/ModalComponent';
 import { useSearchParams } from 'react-router-dom';
+import ContainerGlobal from '../components/ContainerGlobal';
+import imgInventory from '../asset/article.png';
 
 const TableTitle = {
   SearchArticle: ['Tipo', 'Fecha y Hora', 'Usuario', 'Cambio'],
@@ -169,9 +171,9 @@ function Inventory() {
         })} */}
 
 
-        {inventoryItem && (
+        {inventoryItem ? (
           <div key={inventoryItem.id}>
-            <ContainerInventory>
+            <ContainerGlobal>
               <TitleRow>
                 <Title style={{ margin: '0', textTransform: 'uppercase' }}>{inventoryItem.name}</Title>
                 <Price>$ {inventoryItem.price}
@@ -225,10 +227,10 @@ function Inventory() {
                 </tbody>
               </table>
 
-            </ContainerInventory>
-            <br />
+            </ContainerGlobal>
 
-            <ContainerInventory style={{ flexDirection: 'column' }}>
+
+            <ContainerGlobal style={{ flexDirection: 'column' }}>
               <InventoryTitle>Inventario</InventoryTitle>
               <InventoryData>
                 <Description>
@@ -259,9 +261,9 @@ function Inventory() {
                 />
               </HeaderInventory>
 
-            </ContainerInventory>
-            <br />
-            <ContainerInventory style={{ display: 'block' }}>
+            </ContainerGlobal>
+
+            <ContainerGlobal style={{ display: 'block' }}>
               <InventoryTitle>Ubicacion</InventoryTitle>
               <TableUbication>
                 <tbody>
@@ -282,9 +284,9 @@ function Inventory() {
                 <a href='#'>Ver detalles</a>
 
               </HeaderInventory>
-            </ContainerInventory>
-            <br />
-            <ContainerInventory style={{ display: 'block' }}>
+            </ContainerGlobal>
+
+            <ContainerGlobal style={{ display: 'block' }}>
               <InventoryTitle>Actividad</InventoryTitle>
 
               <GBar></GBar>
@@ -335,7 +337,12 @@ function Inventory() {
                 title='Escaneo de agotados'
                 content='Aqui'
               ></Collapse>
-            </ContainerInventory>
+            </ContainerGlobal>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', marginTop: '20%' }}>
+            <img src={imgInventory} alt="No hay datos" style={{ width: '150px', opacity: 0.5 }} />
+            <p>No hay información del artículo</p>
           </div>
         )}
       </ContainerDetails>

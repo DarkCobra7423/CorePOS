@@ -30,7 +30,7 @@ import java.util.List;
 @RequestMapping("/api/sales")
 @Validated
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+// @CrossOrigin(origins = "http://localhost:5173")
 public class SalesController {
 
     private final SalesService salesService;

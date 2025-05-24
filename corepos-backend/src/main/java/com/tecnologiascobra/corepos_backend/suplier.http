@@ -1,0 +1,70 @@
+### Crear proveedor
+POST http://localhost:8080/api/suppliers
+Content-Type: application/json
+
+
+{
+  "idSuplier": "1224231",
+  "name": "Proveedor Ejemplo",
+  "contactName": "Sara lopez",
+  "email": "proveedor@ejemplo.com",
+  "phone": "555-123-4567",
+  "rfc": "HJDSFH12312",
+  "address": {
+    "street": "Av. Reforma #100",
+    "city": "CDMX",
+    "state": "CDMX",
+    "zipCode": "06000"
+  },
+  "createdAt": "2025-05-21T21:23:12.506Z",
+  "active": false
+}
+
+### Obtener todos los proveedores
+GET http://localhost:8080/api/suppliers
+
+### Obtener proveedor por ID
+GET http://localhost:8080/api/suppliers/{{supplierId}}
+
+### Actualizar proveedor
+PUT http://localhost:8080/api/suppliers/{{supplierId}}
+Content-Type: application/json
+
+{
+  "name": "Distribuidora La Estrella S.A.",
+  "contactName": "Carlos M.",
+  "phone": "555-9999",
+  "email": "contacto@estrella.com",
+  "address": "Av. Reforma #100, CDMX"
+}
+
+### Eliminar proveedor
+DELETE http://localhost:8080/api/suppliers/{{supplierId}}
+
+
+
+### Crear relación artículo-proveedor
+POST http://localhost:8080/api/article-suppliers
+Content-Type: application/json
+
+{
+  "upc": "123456789012",
+  "numArticle": "ART-001",
+  "supplierId": "1224231",
+  "supplierSku": "9843249249224",
+  "cost": 42.5,
+  "preferred": true,
+  "lastPurchaseDate": "2025-05-21T21:23:12.506Z"
+}
+
+### Obtener todos los vínculos artículo-proveedor
+GET http://localhost:8080/api/article-suppliers
+
+### Buscar por UPC
+GET http://localhost:8080/api/article-suppliers/by-upc/123456789012
+
+### Buscar por numArticle
+GET http://localhost:8080/api/article-suppliers/by-numArticle/ART-001
+
+### Buscar por ID del proveedor
+GET http://localhost:8080/api/article-suppliers/by-supplier/ID_DEL_PROVEEDOR

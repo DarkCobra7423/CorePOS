@@ -1,0 +1,102 @@
+🧾 Información que debe ver el personal de compras
+🛒 1. Artículos y productos
+
+    Nombre y descripción del artículo
+
+    UPC y/o código interno
+
+    Categoría o tipo
+
+    Marca y presentación
+
+    Unidad de medida (piezas, kilos, litros, etc.)
+
+    Estado del artículo (activo, descontinuado, etc.)
+
+    Stock actual (por tienda y total)
+
+    Stock mínimo y máximo recomendado
+
+    Historial de compras recientes
+
+📦 2. Inventario y disponibilidad
+
+    Existencias por tienda y almacén
+
+    Artículos con bajo stock (alertas de reposición)
+
+    Artículos próximos a caducar (si aplica)
+
+    Productos más vendidos (ventas por periodo)
+
+💲 3. Precios y costos
+
+    Precio de compra actual
+
+    Precio de compra promedio
+
+    Precio de venta sugerido (por tienda si es variable)
+
+    Margen de utilidad
+
+    Historial de precios de compra
+
+    Promociones activas que afectan ese producto
+
+🧾 4. Proveedores
+
+    Lista de proveedores por artículo
+
+    Datos del proveedor (nombre, contacto, dirección, RFC, etc.)
+
+    Precio de compra por proveedor
+
+    Tiempo de entrega promedio
+
+    Condiciones de pago (crédito, contado, días)
+
+    Calificación o rendimiento del proveedor (si se evalúan)
+
+    Última compra realizada
+
+📈 5. Órdenes y solicitudes
+
+    Historial de órdenes de compra por producto
+
+    Estado de órdenes pendientes o en tránsito
+
+    Solicitudes de reposición de tiendas
+
+    Recomendaciones automáticas de reabastecimiento
+
+🔐 6. Permisos recomendados
+
+El personal de compras típicamente ve pero no edita:
+
+    Precios de venta
+
+    Costos de otras tiendas
+
+    Información fiscal
+
+Pueden tener permisos para:
+
+    Crear órdenes de compra
+
+    Consultar historial
+
+    Ver reportes de compras e inventario
+
+🎯 Opcional pero útil:
+
+    Sugerencias automáticas de compra según ventas pasadas o estacionalidad
+
+    Comparación de precios entre proveedores
+
+    Indicadores clave como:
+
+        Rotación de inventario
+
+        Días de inventario restante
+
+        Fill rate del proveedor

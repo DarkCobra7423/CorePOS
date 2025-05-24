@@ -8,6 +8,7 @@ export const COLORS = {
     cGlobalBackground: '#f0f0f0',
     cGlobalBorder: '#8a8c9c',
     cBadgeNotification: '#dc3545',
+    cRed: '#ff0000',
 
 
 

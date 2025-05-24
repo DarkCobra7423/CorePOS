@@ -1,0 +1,42 @@
+### Crear una terminal
+POST http://localhost:8080/api/terminals
+Content-Type: application/json
+
+{
+  "numTerminal": "POS001",
+  "determinant": {
+    "name": "Sucursal Centro",
+    "determinant": "SUC001"
+  },
+  "type": "Caja",
+  "softwareVersion": "1.0.2",
+  "status": "active",
+  "lastSync": "2025-05-21T19:14:10.172Z",
+  "deviceToken": "b3d5dbd6-5c13-4fb7-9025-5c50f4a62c1d",
+  "timestamp": "2025-05-21T19:14:10.172Z"
+}
+
+### Obtener todas las terminales
+GET http://localhost:8080/api/terminals
+
+### Actualizar terminal (reemplaza {id} con el id real)
+PUT http://localhost:8080/api/terminals/682e26c2526942747c2fdcbe
+Content-Type: application/json
+
+{
+  "id": "682e26c2526942747c2fdcbe",
+  "numTerminal": "POS001",
+  "determinant": {
+    "name": "Sucursal Centro",
+    "determinant": "SUC001"
+  },
+  "type": "Kiosko",
+  "softwareVersion": "1.0.3",
+  "status": "maintenance",
+  "lastSync": "2025-05-21T20:00:00Z",
+  "deviceToken": "b3d5dbd6-5c13-4fb7-9025-5c50f4a62c1d",
+  "timestamp": "2025-05-21T20:00:00Z"
+}
+
+### Eliminar terminal (reemplaza {id} con el id real)
+DELETE http://localhost:8080/api/terminals/{{terminalId}}

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.tecnologiascobra.corepos_backend.promotion.promotion;
+package com.tecnologiascobra.corepos_backend.promotion.controller;
 
 import com.tecnologiascobra.corepos_backend.article.model.Article;
 import com.tecnologiascobra.corepos_backend.article.repository.ArticleRepository;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/promotion")
 @Validated
-@CrossOrigin(origins = "http://localhost:5173")
+// @CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class PromotionController {
 

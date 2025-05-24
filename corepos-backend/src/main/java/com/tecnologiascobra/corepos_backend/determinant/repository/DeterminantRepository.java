@@ -10,4 +10,8 @@ import com.tecnologiascobra.corepos_backend.determinant.model.Determinant;
 @Repository
 public interface DeterminantRepository extends MongoRepository<Determinant, String> {
     Optional<Determinant> findByDeterminant(String determinant);
+
+    Optional<Determinant> findByName(String name); // Método para encontrar por nombre
+
+    Optional<Determinant> findById(String id); // Método para encontrar por id
 }
