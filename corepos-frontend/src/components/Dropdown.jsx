@@ -4,7 +4,6 @@ import styled from 'styled-components';
 const Dropdown = ({ title, data, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(null);
-
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleSelect = (item) => {
@@ -20,18 +19,18 @@ const Dropdown = ({ title, data, onSelect }) => {
       </DropdownButton>
       {isOpen && (
         <DropdownMenu>
-          {data.map((item, index) => (
+          {data.map((item) => (
             <DropdownItem
-              key={index}
+              key={item.id}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setIsOpen(false);
                 setSelected(item);
-                onSelect(item);
+                onSelect(item.name);
               }}
             >
-              {item}
+              {item.name}
             </DropdownItem>
           ))}
         </DropdownMenu>

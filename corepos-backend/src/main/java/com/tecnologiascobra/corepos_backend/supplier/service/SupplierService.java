@@ -3,6 +3,8 @@ package com.tecnologiascobra.corepos_backend.supplier.service;
 import com.tecnologiascobra.corepos_backend.supplier.model.Supplier;
 import com.tecnologiascobra.corepos_backend.supplier.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SupplierService {
 
+    @Autowired
     private final SupplierRepository supplierRepository;
 
     public Supplier create(Supplier supplier) {
@@ -22,8 +25,8 @@ public class SupplierService {
         return supplierRepository.findAll();
     }
 
-    public Optional<Supplier> getById(String id) {
-        return supplierRepository.findById(id);
+    public Optional<Supplier> getByIdSuplier(String idSuplier) {
+        return supplierRepository.findByIdSuplier(idSuplier);
     }
 
     public Supplier update(String id, Supplier supplier) {

@@ -9,78 +9,98 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-//import jakarta.validation.constraints.NotBlank;
-//import jakarta.validation.constraints.NotEmpty;
+
+import com.tecnologiascobra.corepos_backend.department.model.Department;
+import com.tecnologiascobra.corepos_backend.articleItem.model.ArticleItem;
+
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-//import lombok.NoArgsConstructor;
-//import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author darkcobra7423
  */
 
-@Document(collection = "article")
 @Data
-@AllArgsConstructor
 @Builder
-// @NoArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "articles")
 public class Article {
 
     @Id
     private String id;
-
-    @NotBlank(message = "El nombre del producto no puede estar vacío")
-    @Schema(description = "Nombre del artículo mostrado al público")
     private String name;
-
-    @Positive(message = "El precio debe ser un valor positivo")
-    private BigDecimal price;
-
-    @NotBlank(message = "El nombre del producto no puede estar vacío")
     private String upc;
-
-    @NotBlank(message = "El nombre del producto no puede estar vacío")
-    private String itemNumber;
-
+    // private ArticleItem itemNumber;
+    private Department department;
     private String size;
-
     private String color;
-
-    @NotBlank(message = "El nombre del producto no puede estar vacío")
-    private int department;
-
-    // @NotEmpty
-    private int backroomStock;
-
-    // @NotEmpty
-    // private int totalStock;
-    private int minStock;
-
-    private int maxStock;
-
-    // @NotEmpty
-    private int salesFloorStock;
-
-    // @NotEmpty
     private int packageQuantity;
-
-    @PositiveOrZero(message = "El precio anterior no puede ser negativo")
+    private Taxes taxes;
     private BigDecimal previousPrice;
-
-    @PositiveOrZero(message = "El cost no puede ser negativo")
+    private BigDecimal price;
     private BigDecimal cost;
+    private boolean active;
 
-    public Article() {
+    private Stock stock; // Stock information
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Stock {
+        private int backroomStock;
+        private int salesFloorStock;
+        private int minStock;
+        private int maxStock;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Taxes {
+        private Tax iva;
+        private Tax ieps;
+
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Tax {
+            private boolean applies;
+            private double rate;
+        }
+    }
+
+    public BigDecimal getPriceWithTaxes() {
+        if (price == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal finalPrice = price;
+
+        if (taxes != null && taxes.getIeps() != null && taxes.getIeps().isApplies()) {
+            BigDecimal iepsRate = BigDecimal.valueOf(taxes.getIeps().getRate());
+            finalPrice = finalPrice.add(price.multiply(iepsRate));
+        }
+
+        if (taxes != null && taxes.getIva() != null && taxes.getIva().isApplies()) {
+            BigDecimal ivaRate = BigDecimal.valueOf(taxes.getIva().getRate());
+            finalPrice = finalPrice.add(finalPrice.multiply(ivaRate));
+        }
+
+        return finalPrice.setScale(2, RoundingMode.HALF_UP);
     }
 
     public int getTotalStock() {
-        return backroomStock + salesFloorStock;
+        return stock.backroomStock + stock.salesFloorStock;
     }
 
     public double getMargin() {
@@ -94,114 +114,3 @@ public class Article {
     }
 
 }
-
-/*
- * Español Inglés sugerido (variable) Comentario
- * 
- * Nombre name Nombre comercial del artículo
- * Precio actual price Precio de venta actual
- * UPC upc Código de barras universal
- * Número de artículo itemNumber Generado automáticamente y único
- * Tamaño size Por ejemplo: 10V
- * Color color Texto simple
- * Departamento departmentId Puedes relacionarlo con una tabla de deptos
- * Backroom stockBackroom Existencia en almacén interno
- * Existencia total stockTotal Calculado: backroom + piso de venta
- * Piso de venta stockSalesFloor Existencia visible al cliente
- * Empaque packagingUnit Unidades por empaque o presentación
- * Margen marginPercentage En porcentaje
- * Precio anterior previousPrice Histórico de precios
- * Costo cost Costo base para calcular margen
- * 
- * 
- * 
- * 
- * public static double calculateMarginPercentage(double price, double cost) {
- * if (price == 0) return 0; // Evitar división por cero
- * return ((price - cost) / price) * 100;
- * }
- * 
- * 
- * 
- * Anotación Qué valida
- * 
- * @NotNull No puede ser null.
- * 
- * @NotBlank No puede ser null ni vacío (solo texto).
- * 
- * @NotEmpty No puede ser vacío (aplica a colecciones también).
- * 
- * @Size(min, max) Longitud de strings, listas, etc.
- * 
- * @Min(value) Valor mínimo (numérico).
- * 
- * @Max(value) Valor- máximo (numérico).
- * 
- * @Positive Solo valores positivos.
- * 
- * @PositiveOrZero Positivos o cero.
- * 
- * @Negative Solo valores negativos.
- * 
- * @NegativeOrZero Negativos o cero.
- * 
- * @Email Formato válido de correo.
- * 
- * @Pattern(regexp = "...") Regex personalizado para cadenas.
- * 
- * 
- * 
- * 🏷️ 2. Anotaciones de Spring Data MongoDB
- * 
- * Se usan para mapear clases a documentos de MongoDB:
- * 
- * Anotación Qué hace
- * 
- * @Document("collection") Indica el nombre de la colección en MongoDB.
- * 
- * @Id Marca el campo como ID (Mongo lo genera si es String).
- * 
- * @Field("nombre_en_mongo") Especifica el nombre del campo en la BD.
- * 
- * @Transient Excluye el campo de ser persistido.
- * 
- * @CreatedDate Guarda fecha de creación automáticamente.
- * 
- * @LastModifiedDate Guarda fecha de última modificación.
- * 
- * @Version Para control de versiones (optimistic locking).
- * 
- * 🔔 Algunas requieren habilitar anotaciones como @EnableMongoAuditing.
- * 📘 3. Anotaciones de OpenAPI / Swagger
- * 
- * Sirven para documentar tu API REST automáticamente:
- * 
- * Anotación Qué documenta
- * 
- * @Operation(summary = "") Describe brevemente qué hace un endpoint.
- * 
- * @ApiResponse(...) Define posibles respuestas.
- * 
- * @Schema(...) Describe los campos de modelos (DTOs, etc.).
- * 
- * @Parameter(...) Personaliza parámetros de entrada.
- * 
- * @Tag(name = "") Agrupa endpoints por categoría.
- * 🎯
- * 4. Otras útiles en Spring MVC / REST
- * 
- * Anotación Uso común
- * 
- * @RequestParam Extrae parámetros de query (e.g. ?id=123).
- * 
- * @PathVariable Extrae variables de la ruta (/producto/{id}).
- * 
- * @RequestBody Lee el cuerpo del request como objeto.
- * 
- * @Valid, @Validated Activa validaciones en clases o métodos.
- * 
- * @RestController Marca como controlador REST.
- * 
- * @ControllerAdvice Manejador global de excepciones.
- * 
- */

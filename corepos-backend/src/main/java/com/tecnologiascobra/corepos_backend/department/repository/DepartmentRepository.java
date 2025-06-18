@@ -7,6 +7,7 @@ package com.tecnologiascobra.corepos_backend.department.repository;
 import com.tecnologiascobra.corepos_backend.department.model.Department;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 /**
  *
@@ -14,5 +15,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface DepartmentRepository extends MongoRepository<Department, String> {
-    
+    Optional<Department> findByNum(String num);
 }

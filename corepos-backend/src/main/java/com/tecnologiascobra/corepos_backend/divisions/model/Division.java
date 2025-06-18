@@ -18,7 +18,7 @@ public class Division {
     @Id
     private String id;
 
-    private Integer numDiv;
+    private String numDiv;
     // private String nombre;
 
 }

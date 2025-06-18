@@ -7,7 +7,10 @@ package com.tecnologiascobra.corepos_backend.article.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,44 +24,53 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Data
 public class ArticleRequest {
 
-    @NotBlank(message = "El nombre del artículo no puede estar vacío")
+    @NotBlank
     private String name;
 
-    @Positive(message = "El precio debe ser un valor positivo")
+    @Positive
     private BigDecimal price;
 
-    @NotBlank(message = "El código UPC no puede estar vacío")
     private String upc;
-
-    @NotBlank(message = "El número de artículo no puede estar vacío")
-    private String itemNumber;
-
+    // private String itemNumber;
     private String size;
     private String color;
+    private String department;
 
-    @Positive(message = "El departamento debe ser un número positivo")
-    private int department;
-
-    // @PositiveOrZero(message = "El inventario de bodega no puede ser negativo")
+    // Campos para Stock
+    @PositiveOrZero
     private int backroomStock;
 
-    // @PositiveOrZero(message = "El stock total no puede ser negativo")
-    // private int totalStock;
-    private int minStock;
-
-    private int maxStock;
-
-    // @PositiveOrZero(message = "El stock en piso de venta no puede ser negativo")
+    @PositiveOrZero
     private int salesFloorStock;
 
-    @PositiveOrZero(message = "La cantidad por paquete no puede ser negativa")
+    @PositiveOrZero
+    private int minStock;
+
+    @PositiveOrZero
+    private int maxStock;
+
+    @PositiveOrZero
     private int packageQuantity;
 
-    @PositiveOrZero(message = "El costo no puede ser negativo")
+    @PositiveOrZero
     private BigDecimal previousPrice;
 
-    @PositiveOrZero(message = "El costo no puede ser negativo")
+    @PositiveOrZero
     private BigDecimal cost;
+
+    private TaxesRequest taxes; // ✅ Nuevo campo
+
+    @Data
+    public static class TaxesRequest {
+        private TaxRequest iva;
+        private TaxRequest ieps;
+
+        @Data
+        public static class TaxRequest {
+            private boolean applies;
+            private double rate;
+        }
+    }
 
     @JsonIgnore
     public int getTotalStock() {

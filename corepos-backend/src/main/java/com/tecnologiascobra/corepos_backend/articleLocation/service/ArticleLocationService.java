@@ -22,10 +22,10 @@ public class ArticleLocationService {
 
     public ArticleLocation createLocation(ArticleLocationRequest request) {
         // Validar existencia del artículo con upc + numArticle
-        boolean exists = articleRepository.existsByUpcAndItemNumber(request.getUpc(), request.getItemNumber());
+        /*boolean exists = articleRepository.existsByUpcAndItemNumber(request.getUpc(), request.getItemNumber());
         if (!exists) {
             throw new IllegalArgumentException("Artículo no encontrado con UPC y numArticle");
-        }
+        }*/
 
         // Validar duplicado
         locationRepository.findByUpcAndItemNumberAndStoreId(

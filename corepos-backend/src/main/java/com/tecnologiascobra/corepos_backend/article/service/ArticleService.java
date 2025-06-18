@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.tecnologiascobra.corepos_backend.article.model.Article;
 import com.tecnologiascobra.corepos_backend.article.repository.ArticleRepository;
+import com.tecnologiascobra.corepos_backend.articleItem.model.ArticleItem;
+import com.tecnologiascobra.corepos_backend.articleItem.repository.ArticleItemRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,26 +25,26 @@ public class ArticleService {
 
     @Autowired
     private ArticleRepository articleRepository;
+    @Autowired
+    private ArticleItemRepository articleItemRepository;
 
-    // Crear article
-    /*
-     * public Article crearArticle(Article article) {
-     * return articleRepository.save(article);
-     * }
-     */
     public Article createArticle(Article article) {
         return articleRepository.save(article);
     }
 
     // Obtener todos los articles
-    public List<Article> getAllArticles() {
-        return articleRepository.findAll();
-    }
+    /*
+     * public List<Article> getAllArticles() {
+     * return articleRepository.findAll();
+     * }
+     */
 
     // Obtener un article por id
-    public Optional<Article> getArticleById(String id) {
-        return articleRepository.findById(id);
-    }
+    /*
+     * public Optional<Article> getArticleById(String id) {
+     * return articleRepository.findById(id);
+     * }
+     */
 
     // Actualizar article
     public Article updateArticle(String id, Article article) {
@@ -63,18 +65,23 @@ public class ArticleService {
     }
 
     public Optional<Article> findByValue(String value) {
-        // Intenta buscar por ID
+        // Buscar por ID
         Optional<Article> article = articleRepository.findById(value);
         if (article.isPresent())
             return article;
 
-        // Intenta buscar por UPC
+        // Buscar por UPC
         article = articleRepository.findByUpc(value);
         if (article.isPresent())
             return article;
 
-        // Intenta buscar por Item Number
-        return articleRepository.findByItemNumber(value);
+        // Buscar por número de artículo
+        Optional<ArticleItem> itemOpt = articleItemRepository.findFirstByNumItem(value);
+        if (itemOpt.isPresent()) {
+            return articleRepository.findByUpc(itemOpt.get().getUpc());
+        }
+
+        return Optional.empty();
     }
 
 }

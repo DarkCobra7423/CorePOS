@@ -17,8 +17,12 @@ public class Department {
     @Id
     private String id;
 
-    private int num;
+    private String num;
     private String name;
 
     private Division division;
+
+    public Department(String num) {
+        this.num = num;
+    }
 }

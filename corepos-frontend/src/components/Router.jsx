@@ -13,6 +13,7 @@ import OrdersC from "../pages/OrdersC";
 import Supplers from "../pages/Suppliers";
 import StocksReports from "../pages/StocksReports";
 import Configuration from "../pages/Configuration";
+import Reception from "../pages/Reception";
 
 const LayoutContainer = styled.div`
   //display: flex;
@@ -64,6 +65,7 @@ export default function Router() {
                         <Route path="/" element={<Layout />}>
                             <Route index element={<Home />} />
                             <Route path="shopping" element={<Shopping />} />
+                            <Route path="reception" element={<Reception />} />
                             <Route path="inventory" element={<Inventory />} />
                             <Route path="newarticle" element={<NewArticle />} />
                             <Route path="ordersc" element={<OrdersC />} />

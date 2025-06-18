@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author darkcobra7423
  */
 public interface DivisionRepository extends MongoRepository<Division, String> {
-    //Optional<Division> findByDivision(String numDiv);
-    Optional<Division> findByNumDiv(Integer numDiv); // correcto
-    
+    // Optional<Division> findByDivision(String numDiv);
+    Optional<Division> findByNumDiv(String numDiv); // correcto
+
 }

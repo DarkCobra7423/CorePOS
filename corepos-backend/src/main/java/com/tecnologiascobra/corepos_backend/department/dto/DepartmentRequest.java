@@ -12,9 +12,9 @@ import lombok.Data;
  */
 @Data
 public class DepartmentRequest {
-    
-    private String id;
-    private int num;
+
+    // private String id;
+    private String num;
     private String name;
-    private int division;
+    private String division;
 }

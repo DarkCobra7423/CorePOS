@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 public class DivisionRequest {
-    private String id;
+    // private String id;
 
-    private Integer numDiv;
+    private String numDiv;
 }

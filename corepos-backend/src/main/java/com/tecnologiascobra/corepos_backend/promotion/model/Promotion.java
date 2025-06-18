@@ -1,6 +1,6 @@
 package com.tecnologiascobra.corepos_backend.promotion.model;
 
-import com.tecnologiascobra.corepos_backend.article.model.ArticleItem;
+import com.tecnologiascobra.corepos_backend.article.model.ArticleItemDTO;
 import java.math.BigDecimal;
 
 import org.springframework.data.annotation.Id;
@@ -22,7 +22,7 @@ public class Promotion {
     @Id
     private String id;
     //private List<ArticleItem> articletUpc;
-    private ArticleItem article; // 👈 Aquí usas tu clase auxiliar
+    private ArticleItemDTO article; // 👈 Aquí usas tu clase auxiliar
     private String name;
     private int buyQuantity;
     private LocalDateTime validity;

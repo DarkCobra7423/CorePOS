@@ -73,27 +73,28 @@ function Inventory() {
       if (!Search) return; // evita llamadas innecesarias
       const data = await searchArticle(Search);
       if (data) {
+
         const transformed = {
           id: data.id,
-          itemNumber: data.itemNumber || 'N/A',
+          itemNumber: data.numItem || 'N/A',
           name: data.name || 'Nombre no disponible',
           /*stock: data.totalStock || 0,*/
           price: data.price || 0,
           upc: data.upc,
           size: data.size,
           color: data.color,
-          minStock: data.minStock,
-          maxStock: data.maxStock,
-          department: data.department,
-          backroomStock: data.backroomStock,
-          salesFloorStock: data.salesFloorStock,
+          minStock: data.stock.minStock,
+          maxStock: data.stock.maxStock,
+          department: data.department.num,
+          backroomStock: data.stock.backroomStock,
+          salesFloorStock: data.stock.salesFloorStock,
           packageQuantity: data.packageQuantity,
           previousPrice: data.previousPrice,
           totalStock: data.totalStock,
           margin: data.margin,
         };
         setInventoryItem(transformed);
-        console.log(transformed);
+        //console.log(transformed);
       } else {
         setInventoryItem(null); // limpia si no encuentra
       }
@@ -184,8 +185,9 @@ function Inventory() {
 
                     {open && (
                       <DropdownContent>
-                        <DropdownItem href="#">Precio Anterior: {inventoryItem.previousPrice}</DropdownItem>
-                        <DropdownItem href="#">Margen: {inventoryItem.margin}</DropdownItem>
+                        <DropdownItem href="#">{inventoryItem.name}</DropdownItem>
+                        <DropdownItem href="#">Precio Anterior: $ {inventoryItem.previousPrice}</DropdownItem>
+                        <DropdownItem href="#">Margen: {inventoryItem.margin} %</DropdownItem>
                         <DropdownItem href="#">Min Stock: {inventoryItem.minStock}</DropdownItem>
                         <DropdownItem href="#">Max Stock: {inventoryItem.maxStock}</DropdownItem>
                       </DropdownContent>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Tabs from "../components/Tabs";
 import ContainerGlobal from "../components/ContainerGlobal";
 import Table from "../components/Table";
@@ -8,7 +8,9 @@ import Stepper from "../components/Stepper";
 import { styled } from 'styled-components';
 import ModalComponent from '../components/ModalComponent';
 import InputCounter from '../components/InputCounter';
-
+import Input from '../components/Input';
+import { getListSupplier, getSearchSupplier } from '../services/shoppingService';
+import TextArea from '../components/TextArea';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -16,7 +18,64 @@ export default function Shopping() {
 
     const [search, setSearch] = useState('');
     const [selectedSupplier, setSelectedSupplier] = useState(null);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalCompraOpen, setIsModalCompraOpen] = useState(false);
+    const [isModalExistenciasOpen, setIsModalExistenciasOpen] = useState(false);
+    const [isModalProveedoresOpen, setIsModalProveedoresOpen] = useState(false);
+    const [isModalNuevoArticuloOpen, setIsModalNuevoArticuloOpen] = useState(false);
+    const [suppliers, setSuppliers] = useState([]);
+    const [searchSupplierId, setSearchSupplierId] = useState('');
+
+    useEffect(() => {
+        const fetchSuppliers = async () => {
+            try {
+                const data = await getListSupplier();
+
+                const mappedData = data.map(item => ({
+                    id: item.idSuplier,
+                    name: item.name,
+                    email: item.email,
+                    contactName: item.contactName,
+                    phone: item.phone,
+                    address: `${item.address.street} ${item.address.zipCode} ${item.address.state} ${item.address.city}`,
+                    rfc: item.rfc,
+                    active: item.active,
+                }));
+                setSuppliers(mappedData);
+                console.log("Suppliers fetched:", mappedData);
+            } catch (error) {
+                console.error('Error fetching suppliers:', error);
+            }
+        }
+
+        fetchSuppliers();
+    }, []);
+
+    /* useEffect(() => {
+        const fetchSuppliers = async () => {
+            if (!suppliers) return;
+            const data = await getSearchSupplier(suppliers);
+            console.log("Data: " + data);
+            if (data) {
+                const mappedData = data.map(item => ({
+                    id: item.idSuplier,
+                    name: item.name,
+                    email: item.email,
+                    contactName: item.contactName,
+                    phone: item.phone,
+                    address: `${item.address.street} ${item.address.zipCode} ${item.address.state} ${item.address.city}`,
+                    rfc: item.rfc,
+                    active: item.active,
+                }));
+                setSuppliers(mappedData);
+            } else {
+                setSuppliers(null);
+            }
+        };
+        fetchSuppliers();
+    }, [suppliers]); */
+
 
     const [deliveryData, setDeliveryData] = useState({
         date: '',
@@ -31,44 +90,56 @@ export default function Shopping() {
         notes: ''
     });
 
+    /* orderNumber: '',
+        orderDate: '',
+            supplierId: '',
+                status: '', // e.g. "Pendiente", "Aprobada", "Enviada" */
+
     const [products, setProducts] = useState([
         { id: 1, upc: '750123456789', numArt: '122111134', sku: '122111134', description: 'Castrol EDGE 0W-20', current: '44', min: '1', max: '54', cost: 22.00, quantity: 1 },
         { id: 2, upc: '750123456789', numArt: '132314541', sku: '122111134', description: 'Castrol EDGE 0W-20', current: '85', min: '2', max: '65', cost: 22.00, quantity: 1 },
         { id: 3, upc: '750123456789', numArt: '231343241', sku: '122111134', description: 'Castrol EDGE 0W-20', current: '73', min: '3', max: '67', cost: 22.00, quantity: 1 },
     ]);
 
-    const headers = ['UPC', 'NumArt', 'SKU Prov', 'Descripcion', 'Proveedor', 'Departamento', 'Stock Actual', 'Mínimo', 'Maximo', 'costo', 'Estado'];
+    const headers = ['UPC', 'NumArt', 'SKU Prov', 'Descripcion', 'Proveedor', 'Departamento', 'Stock', 'Mínimo', 'Maximo', 'costo', 'Estado'];
 
     const headers2 = ['UPC', 'NumArt', 'SKU Prov', 'Descripcion', 'Actual', 'Mín', 'Max', 'costo', 'Subtotal', 'Solicitado', ' '];
 
-    const headers1 = [' ', ' '];
-
-    const dataSupplier = [
-        'Distribuidora El Sol',
-        'Proveedora del Norte',
-        'Comercializadora Central',
-        'Suministros y Servicios MX',
-        'Grupo Abastecedor Total',
-        'Distribuciones Rivera',
-        'Importaciones La Bodega',
-        'Almacenes del Centro',
-        'Corporativo Surtimax',
-        'Abastos Universales'
-    ];
-
-    const rows1 = selectedSupplier
+    const supplierData1 = selectedSupplier
         ? [
-            ['Nombre Proveedor: ', selectedSupplier],
-            ['Correo Electronico: ', 'correo@ejemplo.com'],
-            ['Telefono: ', '00000000'],
-            ['Direccion: ', 'Dirección de prueba'],
-            ['Status: ', 'Activo'],
+            ['Id Proveedor: ', selectedSupplier.id],
+            ['Nombre Proveedor: ', selectedSupplier.name],
+            ['Correo Electronico: ', selectedSupplier.email],
+            ['Telefono: ', selectedSupplier.phone],
         ]
         : [];
 
-    const handleSelect = (item) => {
-        setSelectedSupplier(item);
+    const supplierData2 = selectedSupplier
+        ? [
+            ['Direccion: ', selectedSupplier.address],
+            ['RFC: ', selectedSupplier.rfc],
+            ['Contacto: ', selectedSupplier.contactName],
+            ['Status: ', selectedSupplier.active ? '🟢 Activo' : '🔴 Inactivo'],
+        ]
+        : [];
+
+    const handleSelect = (selectedName) => {
+        const supplier = suppliers.find(s => s.name === selectedName);
+        if (supplier) {
+            setSelectedSupplier({ ...supplier }); // <- clona el objeto
+        }
     };
+
+    const handleSearchById = (e) => {
+        const value = e.target.value;
+        setSearchSupplierId(value);
+
+        const foundSupplier = suppliers.find(s => s.id.toString() === value);
+        if (foundSupplier) {
+            setSelectedSupplier({ ...foundSupplier });
+        }
+    };
+
 
     const handleQuantityChange = (index, newQuantity) => {
         const updated = [...products];
@@ -93,6 +164,18 @@ export default function Shopping() {
         return products.reduce((sum, p) => sum + p.cost * p.quantity, 0).toFixed(2);
     };
 
+
+    const handleGuardarCompra = () => {
+        // lógica de guardar para compra
+        console.log("Guardar compra");
+    };
+
+    const handleGuardarExistencias = () => {
+        // lógica de guardar para existencias
+        console.log("Guardar existencias");
+    };
+
+
     const handleGuardar = () => {
         if (!selectedSupplier) {
             alert("Por favor selecciona un proveedor.");
@@ -112,21 +195,133 @@ export default function Shopping() {
                 <HeaderContainer>
                     <TitleGlobal>Artículos con stock mínimos</TitleGlobal>
                     <NavLinks>
+                        {/* Modal 1 */}
                         <ModalComponent
-                            name="Órdenes de compra"
-                            title='Órdenes de compra'
-                            href='ordersc'
-                        />
-                        <ModalComponent
-                            name="Proveedores"
-                            title='Proveedores'
-                            href='suppliers'
-                        />
+                            name="Orden de compra"
+                            title="Orden de compra"
+                            show={isModalCompraOpen}
+                            onOpen={() => setIsModalCompraOpen(true)}
+                            onClose={() => setIsModalCompraOpen(false)}
+                            onClick={handleGuardarCompra}
+                        //size="80%"
+                        //button={<button>Imprimir</button>}
+                        >
+                            <p>Contenido del modal de compra</p>
+                        </ModalComponent>
+
+                        {/* Modal 2 */}
                         <ModalComponent
                             name="Informe de existencias"
-                            title='Informe de existencias'
-                            href='stocksreports'
-                        />
+                            title="Informe de existencias"
+                            show={isModalExistenciasOpen}
+                            onOpen={() => setIsModalExistenciasOpen(true)}
+                            onClose={() => setIsModalExistenciasOpen(false)}
+                            onClick={handleGuardarExistencias}
+                        //size="80%"
+                        //button={<button>Exportar</button>}
+                        >
+                            <p>Contenido del modal de existencias</p>
+                        </ModalComponent>
+
+                        {/* Modal 3 */}
+                        <ModalComponent
+                            name="Proveedores"
+                            title="Proveedores"
+                            show={isModalProveedoresOpen}
+                            onOpen={() => setIsModalProveedoresOpen(true)}
+                            onClose={() => setIsModalProveedoresOpen(false)}
+                            onClick={handleGuardarExistencias}
+                        //size="80%"
+                        //button={<button>Exportar</button>}
+                        >
+                            <p>Contenido del modal de Proveedores</p>
+                        </ModalComponent>
+                        {/* Modal 4 */}
+                        <ModalComponent
+                            name="Nuevo Articulo"
+                            title="Nuevo Articulo"
+                            show={isModalNuevoArticuloOpen}
+                            onOpen={() => setIsModalNuevoArticuloOpen(true)}
+                            onClose={() => setIsModalNuevoArticuloOpen(false)}
+                            onClick={handleGuardarExistencias}
+                        //size="80%"
+                        //button={<button>Exportar</button>}
+                        >
+                            <Input
+                                type="text"
+                                title="UPC"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Descripcion"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="NumArt"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Tamaño"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Departamento"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Color"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Stock"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Min Stock"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Max Stock"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Empaque"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Costo"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+                            <br />
+                            <Input
+                                type="text"
+                                title="Precio"
+                                onChange={(e) => { }} // Aquí puedes manejar el cambio de valor
+                            />
+
+
+
+                        </ModalComponent>
                     </NavLinks>
                 </HeaderContainer>
             </div>
@@ -156,7 +351,7 @@ export default function Shopping() {
                         <ContainerDiv className="group" style={{ textAlign: 'center' }}>
                             <Dropdown
                                 title="Selecciona un proveedor"
-                                data={dataSupplier}
+                                data={suppliers}
                                 onSelect={handleSelect}
                             />
                             <InputContainer>
@@ -167,21 +362,26 @@ export default function Shopping() {
                                         </g>
                                     </svg>
                                     <input
-                                        placeholder="Id Proveedores"
+                                        placeholder="Id Proveedor"
                                         type="search"
                                         className="input"
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
+                                        value={searchSupplierId}
+                                        onChange={handleSearchById}
                                     />
                                 </div>
                             </InputContainer>
                         </ContainerDiv>
 
                         <br />
-                        <div style={{ width: '50%', margin: 'auto' }}>
+                        <div style={{ width: '100%', margin: 'auto', display: 'flex' }}>
                             <Table
-                                headers={headers1}
-                                rows={rows1}
+                                headers={[' ', ' ']}
+                                rows={supplierData1}
+                                vertical={true}
+                            />
+                            <Table
+                                headers={[' ', ' ']}
+                                rows={supplierData2}
                                 vertical={true}
                             />
                         </div>
@@ -194,13 +394,15 @@ export default function Shopping() {
                                     </g>
                                 </svg>
                                 <input
-                                    placeholder="UPC / Num. Article"
+                                    placeholder="UPC / Num. Article / SKU"
                                     type="search"
                                     className="input"
                                 // Aquí podrías agregar funcionalidad para buscar productos
                                 />
                             </div>
+
                         </InputContainer>
+                        <br />
 
                         <Table
                             headers={headers2}
@@ -233,76 +435,70 @@ export default function Shopping() {
                         </div>
 
                         <br />
-                        <div style={{ marginTop: '20px' }}>
-                            <fieldset style={{ marginBottom: '1rem', padding: '1rem', border: '1px solid #ccc' }}>
+                        <div style={{ marginTop: '20px', display: 'flex' }}>
+                            <fieldset style={{ padding: '1rem', border: '1px solid #ccc', width: '48%', display: 'flex' }}>
                                 <legend><strong>Datos de entrega</strong></legend>
-                                <label>
-                                    Fecha de entrega<br />
-                                    <input
+                                <div style={{ width: '50%' }}>
+                                    <br />
+                                    <Input
                                         type="date"
-                                        value={deliveryData.date}
+                                        title="Fecha de entrega"
+                                        size="90%"
                                         onChange={e => handleDeliveryChange('date', e.target.value)}
                                     />
-                                </label>
-                                <br /><br />
-                                <label>
-                                    Dirección de entrega<br />
-                                    <input
+                                    <br />
+                                    <Input
                                         type="text"
-                                        value={deliveryData.address}
+                                        title="Direccion de entrega"
+                                        size="90%"
                                         onChange={e => handleDeliveryChange('address', e.target.value)}
                                     />
-                                </label>
-                                <br /><br />
-                                <label>
-                                    Recibe<br />
-                                    <input
-                                        type="text"
-                                        value={deliveryData.recipient}
-                                        onChange={e => handleDeliveryChange('recipient', e.target.value)}
-                                    />
-                                </label>
-                                <br /><br />
-                                <label>
-                                    Notas<br />
-                                    <textarea
-                                        value={deliveryData.notes}
+                                </div>
+                                <div style={{ width: '50%' }}>
+
+                                    <br />
+
+                                    <TextArea
+                                        title="Notas"
+                                        size="100%"
+                                        rows="8"
                                         onChange={e => handleDeliveryChange('notes', e.target.value)}
-                                        rows={3}
-                                        style={{ width: '100%' }}
                                     />
-                                </label>
+
+                                </div>
                             </fieldset>
 
-                            <fieldset style={{ padding: '1rem', border: '1px solid #ccc' }}>
+                            <fieldset style={{ padding: '1rem', border: '1px solid #ccc', width: '48%', display: 'flex' }}>
                                 <legend><strong>Datos de pago</strong></legend>
-                                <label>
-                                    Método de pago<br />
-                                    <input
+                                <div style={{ width: '50%' }}>
+                                    <br />
+                                    <Input
                                         type="text"
+                                        title="Metodo de pago"
+                                        size="90%"
                                         value={paymentData.method}
                                         onChange={e => handlePaymentChange('method', e.target.value)}
                                     />
-                                </label>
-                                <br /><br />
-                                <label>
-                                    Plazo<br />
-                                    <input
+                                    <br />
+                                    <Input
                                         type="text"
+                                        title="Plazo"
+                                        size="90%"
                                         value={paymentData.term}
                                         onChange={e => handlePaymentChange('term', e.target.value)}
                                     />
-                                </label>
-                                <br /><br />
-                                <label>
-                                    Notas<br />
-                                    <textarea
+
+                                </div>
+                                <div style={{ width: '50%' }}>
+                                    <br />
+                                    <TextArea
+                                        title="Notas"
+                                        size="100%"
+                                        rows="8"
                                         value={paymentData.notes}
                                         onChange={e => handlePaymentChange('notes', e.target.value)}
-                                        rows={3}
-                                        style={{ width: '100%' }}
                                     />
-                                </label>
+                                </div>
                             </fieldset>
                         </div>
 
@@ -340,14 +536,14 @@ const CenteredDiv = styled.div`
   margin: 2rem 0;
 `;
 
-const Input = styled.input`
+/* const Input = styled.input`
   line-height: 28px;
   align-items: center;
   position: relative;
   max-width: 100%;
   margin: auto;
   margin-left: 8rem;
-`;
+`; */
 
 const ContainerDiv = styled.div`
   display: flex;

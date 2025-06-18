@@ -7,7 +7,7 @@ package com.tecnologiascobra.corepos_backend.promotion.controller;
 import com.tecnologiascobra.corepos_backend.article.model.Article;
 import com.tecnologiascobra.corepos_backend.article.repository.ArticleRepository;
 import com.tecnologiascobra.corepos_backend.promotion.dto.PromotionRequest;
-import com.tecnologiascobra.corepos_backend.article.model.ArticleItem;
+import com.tecnologiascobra.corepos_backend.article.model.ArticleItemDTO;
 import com.tecnologiascobra.corepos_backend.promotion.model.Promotion;
 import com.tecnologiascobra.corepos_backend.promotion.repository.PromotionRepository;
 import com.tecnologiascobra.corepos_backend.promotion.service.PromotionService;
@@ -48,7 +48,7 @@ public class PromotionController {
         Article article = articleRepository.findByUpc(dto.getArticleUpc())
                 .orElseThrow(() -> new RuntimeException("Article not found"));
 
-        ArticleItem articleItem = new ArticleItem(article.getId(), article.getUpc());
+        ArticleItemDTO articleItem = new ArticleItemDTO(article.getId(), article.getUpc());
 
         Promotion promotion = Promotion.builder()
                 .article(articleItem) // 👈 Aquí lo incluyes

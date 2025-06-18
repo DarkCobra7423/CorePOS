@@ -11,6 +11,9 @@ import com.tecnologiascobra.corepos_backend.divisions.model.Division;
 import com.tecnologiascobra.corepos_backend.divisions.repository.DivisionRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,46 +36,53 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DepartmentController {
 
-    private final DepartmentService departmentService;
-    private final DivisionRepository divisionRepository;
+        private final DepartmentService departmentService;
+        private final DivisionRepository divisionRepository;
 
-    @PostMapping
-    public ResponseEntity<Department> createDepartment(@RequestBody @Valid DepartmentRequest dto) {
-        Division division = divisionRepository.findByNumDiv(dto.getDivision())
-                .orElseThrow(() -> new RuntimeException("Division nor found"));
+        @PostMapping
+        public ResponseEntity<Department> createDepartment(@RequestBody @Valid DepartmentRequest dto) {
 
-        Division div = new Division(division.getId(), division.getNumDiv());
+                Division division = divisionRepository.findByNumDiv(dto.getDivision())
+                                .orElseThrow(() -> new RuntimeException("Division nor found"));
 
-        Department department = Department.builder()
-                .num(dto.getNum())
-                .name(dto.getName())
-                .division(div)
-                .build();
+                Division div = new Division(division.getId(), division.getNumDiv());
 
-        Department saved = departmentService.createDepartment(department);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
-    }
+                Department department = Department.builder()
+                                .num(dto.getNum())
+                                .name(dto.getName())
+                                .division(div)
+                                .build();
 
-    @PutMapping("/{id}") // ✅ cambiar de @GetMapping
-    public ResponseEntity<Department> updateDepartment(@PathVariable String id,
-            @RequestBody @Valid Department department) {
-        Department updated = departmentService.updateDepartment(id, department);
-        return updated != null ? ResponseEntity.ok(updated)
-                : ResponseEntity.notFound().build();
-    }
+                Department saved = departmentService.createDepartment(department);
+                return new ResponseEntity<>(saved, HttpStatus.CREATED);
+        }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDepartment(@PathVariable String id) {
-        return departmentService.deleteDepartment(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.noContent().build();
-    }
+        @GetMapping
+        public ResponseEntity<List<Department>> getAll() {
+                return ResponseEntity.ok(departmentService.getAllDepartment());
+        }
 
-    /*
-    @GetMapping("/{div}")
-    public ResponseEntity<Department> getDivision(@PathVariable String numDiv){
-        return departmentService.getDivision(numDiv)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }*/
+        @PutMapping("/{id}") // ✅ cambiar de @GetMapping
+        public ResponseEntity<Department> updateDepartment(@PathVariable String id,
+                        @RequestBody @Valid Department department) {
+                Department updated = departmentService.updateDepartment(id, department);
+                return updated != null ? ResponseEntity.ok(updated)
+                                : ResponseEntity.notFound().build();
+        }
+
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> deleteDepartment(@PathVariable String id) {
+                return departmentService.deleteDepartment(id)
+                                ? ResponseEntity.noContent().build()
+                                : ResponseEntity.noContent().build();
+        }
+
+        /*
+         * @GetMapping("/{div}")
+         * public ResponseEntity<Department> getDivision(@PathVariable String numDiv){
+         * return departmentService.getDivision(numDiv)
+         * .map(ResponseEntity::ok)
+         * .orElse(ResponseEntity.notFound().build());
+         * }
+         */
 }

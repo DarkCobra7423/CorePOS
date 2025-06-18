@@ -1,0 +1,48 @@
+[ Cliente / Frontend ]
+         |
+         |  (HTTP Request: POST, GET, PUT, DELETE)
+         v
+[ Controller (API REST) ]  
+  - Recibe la petición HTTP
+  - Valida entrada (ejemplo: @Valid DTO)
+  - Transforma DTO en Modelo (si es necesario)
+         |
+         v
+[ Service (Lógica de negocio) ]
+  - Recibe modelo o parámetros desde Controller
+  - Aplica reglas de negocio, validaciones adicionales
+  - Llama al Repository para acceder a la base de datos
+         |
+         v
+[ Repository (Acceso a BD) ]
+  - Ejecuta consultas a MongoDB (save, find, delete, update)
+  - Retorna resultados a Service
+         |
+         v
+[ Service ]
+  - Procesa respuesta si es necesario
+  - Retorna datos al Controller
+         |
+         v
+[ Controller ]
+  - Devuelve respuesta HTTP (ResponseEntity) al Cliente
+         |
+         v
+[ Cliente / Frontend ]
+  - Recibe datos o confirmación
+
+Explicación paso a paso
+
+    Cliente: Puede ser un frontend (React, Angular, etc.) o cualquier consumidor de tu API.
+
+    Controlador (Controller): Es la capa que expone los endpoints HTTP. Recibe la petición, valida el DTO (objeto que representa la entrada), y lo convierte a un modelo si hace falta.
+
+    DTO (Data Transfer Object): Es un objeto simple que transporta datos entre cliente y servidor. No contiene lógica, solo atributos.
+
+    Servicio (Service): Aquí va la lógica de negocio. El servicio recibe los modelos, valida o procesa la información, y se comunica con el repositorio.
+
+    Repositorio (Repository): Interactúa directamente con la base de datos MongoDB, realizando operaciones CRUD.
+
+    Base de datos: MongoDB guarda o recupera documentos según lo solicitado.
+
+    El flujo regresa con la respuesta en formato adecuado para el cliente.
