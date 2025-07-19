@@ -4,8 +4,10 @@
  */
 package com.tecnologiascobra.corepos_backend.article.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.tecnologiascobra.corepos_backend.article.model.Article;
 
@@ -16,15 +18,19 @@ import com.tecnologiascobra.corepos_backend.article.model.Article;
 
 @Repository
 public interface ArticleRepository extends MongoRepository<Article, String> {
-    
+
     Optional<Article> findByUpc(String upc);
-    
+
     Optional<Article> findById(String id);
-    
 
-    //Optional<Article> findByItemNumber(String itemNumber);
+    /*
+     * @Query("{ $expr: { $lt: [\"$totalStock\", \"$stock.minStock\"] } }")
+     * List<Article> findArticlesWithLowStock();
+     */
 
-    //Optional<Article> findByUpcAndItemNumber(String upc, String itemNumber);
+    // Optional<Article> findByItemNumber(String itemNumber);
 
-    //boolean existsByUpcAndItemNumber(String upc, String itemNumber);
+    // Optional<Article> findByUpcAndItemNumber(String upc, String itemNumber);
+
+    // boolean existsByUpcAndItemNumber(String upc, String itemNumber);
 }

@@ -84,6 +84,13 @@ public class ArticleService {
         return Optional.empty();
     }
 
+    public List<Article> getArticlesWithLowStock() {
+        return articleRepository.findAll()
+                .stream()
+                .filter(a -> a.getTotalStock() <= a.getStock().getMinStock())
+                .toList();
+    }
+
 }
 
 /*

@@ -35,3 +35,12 @@ export const getArticleUpc = async (upc) => {
         console.error('Failed to retrive item');
     }
 }
+
+export const fetchStockLow = async () => {
+    try {
+        const response = await apiClient.get(`/articles/stock-low`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to retrive list items');
+    }
+}

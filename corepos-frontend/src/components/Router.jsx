@@ -14,6 +14,7 @@ import Supplers from "../pages/Suppliers";
 import StocksReports from "../pages/StocksReports";
 import Configuration from "../pages/Configuration";
 import Reception from "../pages/Reception";
+import Test from "../pages/Test";
 
 const LayoutContainer = styled.div`
   //display: flex;
@@ -72,6 +73,7 @@ export default function Router() {
                             <Route path="suppliers" element={<Supplers />} />
                             <Route path="stocksreports" element={<StocksReports />} />
                             <Route path="configuration" element={<Configuration />} />
+                            <Route path="test" element={<Test />} />
                         </Route>
                         <Route path="/sales" element={<Sales />} />
                     </Routes>

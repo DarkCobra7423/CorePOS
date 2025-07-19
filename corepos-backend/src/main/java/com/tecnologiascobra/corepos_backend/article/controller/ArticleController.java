@@ -36,163 +36,195 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ArticleController {
 
-    private final ArticleService articleService;
-    private final DepartmentRepository departmentRepository;
-    private final ArticleItemRepository articleItemRepository;
+        private final ArticleService articleService;
+        private final DepartmentRepository departmentRepository;
+        private final ArticleItemRepository articleItemRepository;
 
-    @PostMapping
-    public ResponseEntity<Article> createArticle(@RequestBody @Valid ArticleRequest dto) {
+        @PostMapping
+        public ResponseEntity<Article> createArticle(@RequestBody @Valid ArticleRequest dto) {
 
-        /*
-         * ArticleItem itemNumber =
-         * articleItemRepository.findByNumItem(dto.getItemNumber())
-         * .orElseThrow(() -> new RuntimeException("Article Item not found"));
-         */
-        Department department = departmentRepository.findByNum(dto.getDepartment())
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                /*
+                 * ArticleItem itemNumber =
+                 * articleItemRepository.findByNumItem(dto.getItemNumber())
+                 * .orElseThrow(() -> new RuntimeException("Article Item not found"));
+                 */
+                Department department = departmentRepository.findByNum(dto.getDepartment())
+                                .orElseThrow(() -> new RuntimeException("Department not found"));
 
-        Department dep = new Department(department.getNum());
+                Department dep = new Department(department.getNum());
 
-        Article.Stock stock = Article.Stock.builder()
-                .backroomStock(dto.getBackroomStock())
-                .salesFloorStock(dto.getSalesFloorStock())
-                .minStock(dto.getMinStock())
-                .maxStock(dto.getMaxStock())
-                .build();
+                Article.Stock stock = Article.Stock.builder()
+                                .backroomStock(dto.getBackroomStock())
+                                .salesFloorStock(dto.getSalesFloorStock())
+                                .minStock(dto.getMinStock())
+                                .maxStock(dto.getMaxStock())
+                                .build();
 
-        Article.Taxes taxes = null;
-        if (dto.getTaxes() != null) {
-            taxes = Article.Taxes.builder()
-                    .iva(Article.Taxes.Tax.builder()
-                            .applies(dto.getTaxes().getIva().isApplies())
-                            .rate(dto.getTaxes().getIva().getRate())
-                            .build())
-                    .ieps(Article.Taxes.Tax.builder()
-                            .applies(dto.getTaxes().getIeps().isApplies())
-                            .rate(dto.getTaxes().getIeps().getRate())
-                            .build())
-                    .build();
+                Article.Taxes taxes = null;
+                if (dto.getTaxes() != null) {
+                        taxes = Article.Taxes.builder()
+                                        .iva(Article.Taxes.Tax.builder()
+                                                        .applies(dto.getTaxes().getIva().isApplies())
+                                                        .rate(dto.getTaxes().getIva().getRate())
+                                                        .build())
+                                        .ieps(Article.Taxes.Tax.builder()
+                                                        .applies(dto.getTaxes().getIeps().isApplies())
+                                                        .rate(dto.getTaxes().getIeps().getRate())
+                                                        .build())
+                                        .build();
+                }
+
+                Article article = Article.builder()
+                                .name(dto.getName())
+                                .price(dto.getPrice())
+                                .upc(dto.getUpc())
+                                // .itemNumber(itemNumber)
+                                .size(dto.getSize())
+                                .color(dto.getColor())
+                                .department(dep)
+                                .stock(stock)
+                                .taxes(taxes)
+                                .packageQuantity(dto.getPackageQuantity())
+                                .previousPrice(dto.getPreviousPrice())
+                                .cost(dto.getCost())
+                                .active(true)
+                                .build();
+
+                Article saved = articleService.createArticle(article);
+                return new ResponseEntity<>(saved, HttpStatus.CREATED);
         }
 
-        Article article = Article.builder()
-                .name(dto.getName())
-                .price(dto.getPrice())
-                .upc(dto.getUpc())
-                // .itemNumber(itemNumber)
-                .size(dto.getSize())
-                .color(dto.getColor())
-                .department(dep)
-                .stock(stock)
-                .taxes(taxes)
-                .packageQuantity(dto.getPackageQuantity())
-                .previousPrice(dto.getPreviousPrice())
-                .cost(dto.getCost())
-                .active(true)
-                .build();
+        /*
+         * @GetMapping
+         * public ResponseEntity<List<Article>> getAllArticles() {
+         * return ResponseEntity.ok(articleService.getAllArticles());
+         * }
+         */
+        @PutMapping("/{id}")
+        public ResponseEntity<Article> actualizarArticle(@PathVariable String id, @RequestBody @Valid Article article) {
+                Article actualizado = articleService.updateArticle(id, article);
+                return actualizado != null ? ResponseEntity.ok(actualizado)
+                                : ResponseEntity.notFound().build();
+        }
 
-        Article saved = articleService.createArticle(article);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
-    }
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> eliminarArticle(@PathVariable String id) {
+                return articleService.deleteArticle(id)
+                                ? ResponseEntity.noContent().build()
+                                : ResponseEntity.notFound().build();
+        }
 
-    /*
-     * @GetMapping
-     * public ResponseEntity<List<Article>> getAllArticles() {
-     * return ResponseEntity.ok(articleService.getAllArticles());
-     * }
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<Article> actualizarArticle(@PathVariable String id, @RequestBody @Valid Article article) {
-        Article actualizado = articleService.updateArticle(id, article);
-        return actualizado != null ? ResponseEntity.ok(actualizado)
-                : ResponseEntity.notFound().build();
-    }
+        @GetMapping("/stock-low")
+        public ResponseEntity<List<ArticleItemDTO>> getArticlesWithLowStock() {
+                List<Article> lowStockArticles = articleService.getArticlesWithLowStock();
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarArticle(@PathVariable String id) {
-        return articleService.deleteArticle(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
-    }
+                List<ArticleItemDTO> dtos = lowStockArticles.stream().map(article -> {
+                        Optional<ArticleItem> articleItemOpt = articleItemRepository.findFirstByUpc(article.getUpc());
 
-    /*
-     * @GetMapping("/{id}")
-     * public ResponseEntity<ArticleItemDTO> getArticleWithNumItem(@PathVariable
-     * String id) {
-     * 
-     * return articleService.getArticleById(id).map(article -> {
-     * Optional<ArticleItem> articleItemOpt =
-     * articleItemRepository.findFirstByUpc_Id(article.getId());
-     * System.out.println("¿Encontró ArticleItem? -> " +
-     * articleItemOpt.isPresent());
-     * 
-     * ArticleItemDTO dto = new ArticleItemDTO();
-     * dto.setId(article.getId());
-     * dto.setName(article.getName());
-     * dto.setUpc(article.getUpc());
-     * dto.setDepartment(article.getDepartment());
-     * dto.setSize(article.getSize());
-     * dto.setColor(article.getColor());
-     * dto.setPackageQuantity(article.getPackageQuantity());
-     * dto.setTaxes(article.getTaxes());
-     * dto.setPreviousPrice(article.getPreviousPrice());
-     * dto.setPrice(article.getPrice());
-     * dto.setCost(article.getCost());
-     * dto.setActive(article.isActive());
-     * dto.setStock(article.getStock());
-     * dto.setPriceWithTaxes(article.getPriceWithTaxes());
-     * dto.setTotalStock(article.getTotalStock());
-     * dto.setMargin(article.getMargin());
-     * dto.setNumItem(articleItemOpt
-     * .map(ArticleItem::getNumItem).orElse(null));
-     * 
-     * return ResponseEntity.ok(dto);
-     * }).orElse(ResponseEntity.notFound().build());
-     * }
-     */
+                        ArticleItemDTO dto = new ArticleItemDTO();
+                        dto.setId(article.getId());
+                        dto.setName(article.getName());
+                        dto.setUpc(article.getUpc());
+                        dto.setDepartment(article.getDepartment());
+                        dto.setSize(article.getSize());
+                        dto.setColor(article.getColor());
+                        dto.setPackageQuantity(article.getPackageQuantity());
+                        dto.setPreviousPrice(article.getPreviousPrice());
+                        dto.setPrice(article.getPrice());
+                        dto.setCost(article.getCost());
+                        dto.setActive(article.isActive());
+                        dto.setStock(article.getStock());
+                        dto.setPriceWithTaxes(article.getPriceWithTaxes());
+                        dto.setTotalStock(article.getTotalStock());
+                        dto.setMargin(article.getMargin());
+                        dto.setNumItem(articleItemOpt.map(ArticleItem::getNumItem).orElse(null));
 
-    @GetMapping("/search")
-    public ResponseEntity<ArticleItemDTO> search(@RequestParam String value) {
+                        return dto;
+                }).toList();
 
-        return articleService.findByValue(value).map(article -> {
+                return ResponseEntity.ok(dtos);
+        }
 
-            Optional<ArticleItem> articleItemOpt = articleItemRepository.findFirstByUpc(article.getUpc());
-            System.out.println("¿Encontró ArticleItem? -> " + articleItemOpt.isPresent());
+        /*
+         * @GetMapping("/{id}")
+         * public ResponseEntity<ArticleItemDTO> getArticleWithNumItem(@PathVariable
+         * String id) {
+         * 
+         * return articleService.getArticleById(id).map(article -> {
+         * Optional<ArticleItem> articleItemOpt =
+         * articleItemRepository.findFirstByUpc_Id(article.getId());
+         * System.out.println("¿Encontró ArticleItem? -> " +
+         * articleItemOpt.isPresent());
+         * 
+         * ArticleItemDTO dto = new ArticleItemDTO();
+         * dto.setId(article.getId());
+         * dto.setName(article.getName());
+         * dto.setUpc(article.getUpc());
+         * dto.setDepartment(article.getDepartment());
+         * dto.setSize(article.getSize());
+         * dto.setColor(article.getColor());
+         * dto.setPackageQuantity(article.getPackageQuantity());
+         * dto.setTaxes(article.getTaxes());
+         * dto.setPreviousPrice(article.getPreviousPrice());
+         * dto.setPrice(article.getPrice());
+         * dto.setCost(article.getCost());
+         * dto.setActive(article.isActive());
+         * dto.setStock(article.getStock());
+         * dto.setPriceWithTaxes(article.getPriceWithTaxes());
+         * dto.setTotalStock(article.getTotalStock());
+         * dto.setMargin(article.getMargin());
+         * dto.setNumItem(articleItemOpt
+         * .map(ArticleItem::getNumItem).orElse(null));
+         * 
+         * return ResponseEntity.ok(dto);
+         * }).orElse(ResponseEntity.notFound().build());
+         * }
+         */
 
-            System.out.println("Article name: " + article.getName());
-            System.out.println("Article UPC: " + article.getUpc());
-            System.out.println(
-                    "ArticleItem.numItem: " + articleItemOpt.map(ArticleItem::getNumItem).orElse("NO ENCONTRADO"));
+        @GetMapping("/search")
+        public ResponseEntity<ArticleItemDTO> search(@RequestParam String value) {
 
-            ArticleItemDTO dto = new ArticleItemDTO();
-            dto.setId(article.getId());
-            dto.setName(article.getName());
-            dto.setUpc(article.getUpc());
-            dto.setDepartment(article.getDepartment());
-            dto.setSize(article.getSize());
-            dto.setColor(article.getColor());
-            dto.setPackageQuantity(article.getPackageQuantity());
-            dto.setTaxes(article.getTaxes());
-            dto.setPreviousPrice(article.getPreviousPrice());
-            dto.setPrice(article.getPrice());
-            dto.setCost(article.getCost());
-            dto.setActive(article.isActive());
-            dto.setStock(article.getStock());
-            dto.setPriceWithTaxes(article.getPriceWithTaxes());
-            dto.setTotalStock(article.getTotalStock());
-            dto.setMargin(article.getMargin());
-            dto.setNumItem(articleItemOpt
-                    .map(ai -> ai.getNumItem()).orElse(null));
+                return articleService.findByValue(value).map(article -> {
 
-            return ResponseEntity.ok(dto);
-        }).orElse(ResponseEntity.notFound().build());
-    }
+                        Optional<ArticleItem> articleItemOpt = articleItemRepository.findFirstByUpc(article.getUpc());
+                        System.out.println("¿Encontró ArticleItem? -> " + articleItemOpt.isPresent());
 
-    /*
-     * @GetMapping("/upc")
-     * public ResponseEntity<Article> getUpc(@RequestParam String value) {
-     * return articleService.findByValue(value)
-     * .map(ResponseEntity::ok)
-     * .orElse(ResponseEntity.notFound().build());
-     * }
-     */
+                        System.out.println("Article name: " + article.getName());
+                        System.out.println("Article UPC: " + article.getUpc());
+                        System.out.println(
+                                        "ArticleItem.numItem: " + articleItemOpt.map(ArticleItem::getNumItem)
+                                                        .orElse("NO ENCONTRADO"));
+
+                        ArticleItemDTO dto = new ArticleItemDTO();
+                        dto.setId(article.getId());
+                        dto.setName(article.getName());
+                        dto.setUpc(article.getUpc());
+                        dto.setDepartment(article.getDepartment());
+                        dto.setSize(article.getSize());
+                        dto.setColor(article.getColor());
+                        dto.setPackageQuantity(article.getPackageQuantity());
+                        dto.setTaxes(article.getTaxes());
+                        dto.setPreviousPrice(article.getPreviousPrice());
+                        dto.setPrice(article.getPrice());
+                        dto.setCost(article.getCost());
+                        dto.setActive(article.isActive());
+                        dto.setStock(article.getStock());
+                        dto.setPriceWithTaxes(article.getPriceWithTaxes());
+                        dto.setTotalStock(article.getTotalStock());
+                        dto.setMargin(article.getMargin());
+                        dto.setNumItem(articleItemOpt
+                                        .map(ai -> ai.getNumItem()).orElse(null));
+
+                        return ResponseEntity.ok(dto);
+                }).orElse(ResponseEntity.notFound().build());
+        }
+
+        /*
+         * @GetMapping("/upc")
+         * public ResponseEntity<Article> getUpc(@RequestParam String value) {
+         * return articleService.findByValue(value)
+         * .map(ResponseEntity::ok)
+         * .orElse(ResponseEntity.notFound().build());
+         * }
+         */
 }

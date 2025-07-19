@@ -13,4 +13,6 @@ npm i --save @fortawesome/fontawesome-svg-core
 npm install --save @fortawesome/free-solid-svg-icons
 npm install --save @fortawesome/react-fontawesome
 
+npm install @mui/x-date-pickers @mui/material @mui/icons-material dayjs
+npm install @mui/x-date-pickers @mui/material @emotion/react @emotion/styled dayjs jspdf jspdf-autotable
 
